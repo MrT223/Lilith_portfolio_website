@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lilith - Artist Portfolio</title>
+  <meta name="description" content="Lilith's art portfolio - Commission illustrations, chibi art, and character designs. View samples, pricing, and terms of service." />
+  <meta property="og:title" content="Lilith - Artist Portfolio" />
+  <meta property="og:description" content="Anime & Chibi art commissions by Lilith" />
+  <meta property="og:image" content="/img/lilith/lilith01.jpg" />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <canvas id="sakura-canvas"></canvas>
+
+  <nav id="main-nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <span class="logo-icon"><i data-lucide="flower"></i></span>
+        <span class="logo-text">Lilith</span>
+      </a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="#home" class="nav-link active" data-page="home">Trang chủ</a></li>
+        <li><a href="#gallery" class="nav-link" data-page="gallery">Gallery</a></li>
+        <li><a href="#price" class="nav-link" data-page="price">Giá & Điều khoản</a></li>
+        <li><a href="#about" class="nav-link" data-page="about">About Me</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main id="app">
+    <div id="page-container"></div>
+  </main>
+
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox-close" id="lightbox-close">&times;</button>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <footer id="main-footer">
+    <div class="footer-inner">
+      <span class="footer-blossom"><i data-lucide="flower"></i></span>
+      <p>&copy; 2026 Lilith Art. All rights reserved.</p>
+      <p class="footer-note">Do not repost or use my art without permission.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
