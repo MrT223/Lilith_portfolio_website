@@ -12,17 +12,21 @@ const pages = {
 };
 
 let currentPage = 'home';
+let scrollNavCooldown = false;
 
 // ==================== SPA ROUTER ====================
 function navigate(page) {
   if (page === currentPage) return;
   const container = document.getElementById('page-container');
   container.classList.add('fade-out');
+  scrollNavCooldown = true;
   setTimeout(() => {
     currentPage = page;
+    window.location.hash = page;
     renderPage(page);
     container.classList.remove('fade-out');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    setTimeout(() => { scrollNavCooldown = false; }, 800);
   }, 400);
 }
 
@@ -70,7 +74,6 @@ function initNav() {
     linksContainer.classList.toggle('open');
   });
 
-  // Close mobile menu on outside click
   document.addEventListener('click', (e) => {
     if (!e.target.closest('#main-nav')) {
       linksContainer.classList.remove('open');
@@ -78,10 +81,39 @@ function initNav() {
     }
   });
 
-  // Scroll effect for nav
   window.addEventListener('scroll', () => {
     document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 30);
   });
+
+  let wheelAccum = 0;
+  window.addEventListener('wheel', (e) => {
+    if (currentPage !== 'home' || scrollNavCooldown) return;
+    if (e.deltaY > 0) {
+      wheelAccum += e.deltaY;
+      if (wheelAccum > 200) {
+        wheelAccum = 0;
+        navigate('gallery');
+      }
+    } else {
+      wheelAccum = 0;
+    }
+  }, { passive: true });
+
+  let touchStartY = 0;
+  window.addEventListener('touchstart', (e) => {
+    if (currentPage === 'home') {
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', (e) => {
+    if (currentPage !== 'home' || scrollNavCooldown) return;
+    const touchEndY = e.changedTouches[0].clientY;
+    const diff = touchStartY - touchEndY;
+    if (diff > 50) {
+      navigate('gallery');
+    }
+  }, { passive: true });
 }
 
 // ==================== LIGHTBOX ====================
