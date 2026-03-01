@@ -43,6 +43,9 @@ export function renderAbout() {
             Cảm ơn bạn đã ghé thăm portfolio của mình! Nếu bạn thích art style của mình,
             đừng ngần ngại liên hệ để đặt commission nhé <img src="/img/concept/logo.png" alt="" class="subtitle-logo" />
           </p>
+          <a href="https://www.facebook.com/profile.php?id=61580142310861" class="btn btn-primary about-contact-btn" target="_blank" rel="noopener noreferrer">
+            <i data-lucide="message-circle"></i> Liên hệ qua Facebook
+          </a>
         </div>
       </div>
 

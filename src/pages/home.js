@@ -22,6 +22,9 @@ export function renderHome() {
         <a href="#about" class="btn btn-outline" data-page="about" onclick="event.preventDefault(); window.location.hash='about';">
           <i data-lucide="sparkles"></i> About Me
         </a>
+        <a href="https://www.facebook.com/profile.php?id=61580142310861" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+          <i data-lucide="message-circle"></i> Liên hệ Commission
+        </a>
       </div>
       <div class="scroll-indicator">
         <span></span>
