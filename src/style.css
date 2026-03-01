@@ -96,6 +96,41 @@ body {
   color: var(--pink-400);
 }
 
+.logo-icon {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.subtitle-logo {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.title-logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.section-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  vertical-align: middle;
+  display: inline-block;
+}
+
 .tos-warning .lucide,
 .tos-warning [data-lucide] {
   width: 20px;

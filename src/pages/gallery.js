@@ -26,7 +26,7 @@ export function renderGallery() {
     <section class="gallery-page">
       <div class="page-header reveal">
         <h1 class="page-title">
-          <span class="page-title-accent"><i data-lucide="flower"></i></span> Gallery
+          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Gallery
         </h1>
         <p class="page-desc">Tuyển tập các tác phẩm đã thực hiện</p>
       </div>

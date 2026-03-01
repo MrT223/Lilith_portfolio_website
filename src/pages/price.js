@@ -3,7 +3,7 @@ export function renderPrice() {
     <section class="price-page">
       <div class="page-header reveal">
         <h1 class="page-title">
-          <span class="page-title-accent"><i data-lucide="flower"></i></span> Bảng Giá & Điều Khoản
+          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Bảng Giá & Điều Khoản
         </h1>
         <p class="page-desc">Commission pricing & terms of service</p>
       </div>
@@ -119,10 +119,133 @@ export function renderPrice() {
         </div>
       </div>
 
+      <!-- ALTERNATIVE STYLE PRICE -->
+      <h2 class="page-title reveal" style="margin-top: 3rem; margin-bottom: 1.5rem;">
+        <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Anime-Manga Style
+      </h2>
+      <div class="price-section">
+        <!-- Alt Normal -->
+        <div class="price-card">
+          <h2 class="price-card-title"><i data-lucide="palette"></i> Normal</h2>
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Loại</th>
+                <th>Sketch</th>
+                <th>Line</th>
+                <th>Full</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Head</td>
+                <td>70.000₫</td>
+                <td>100.000₫</td>
+                <td>150.000₫</td>
+              </tr>
+              <tr>
+                <td>Chest-up</td>
+                <td>110.000₫</td>
+                <td>140.000₫</td>
+                <td>210.000₫</td>
+              </tr>
+              <tr>
+                <td>Half-body</td>
+                <td>150.000₫</td>
+                <td>200.000₫</td>
+                <td>270.000₫</td>
+              </tr>
+              <tr>
+                <td>Knee-up</td>
+                <td>180.000₫</td>
+                <td>260.000₫</td>
+                <td>350.000₫</td>
+              </tr>
+              <tr>
+                <td>Full-body</td>
+                <td>230.000₫</td>
+                <td>300.000₫</td>
+                <td>470.000₫</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Alt Manga -->
+        <div class="price-card">
+          <h2 class="price-card-title"><i data-lucide="book-open"></i> Manga</h2>
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Loại</th>
+                <th>Line</th>
+                <th>Inking</th>
+                <th>Color</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Head</td>
+                <td>90.000₫</td>
+                <td>130.000₫</td>
+                <td>150.000₫</td>
+              </tr>
+              <tr>
+                <td>Chest-up</td>
+                <td>120.000₫</td>
+                <td>150.000₫</td>
+                <td>200.000₫</td>
+              </tr>
+              <tr>
+                <td>Half-body</td>
+                <td>160.000₫</td>
+                <td>200.000₫</td>
+                <td>250.000₫</td>
+              </tr>
+              <tr>
+                <td>Knee-up</td>
+                <td>190.000₫</td>
+                <td>250.000₫</td>
+                <td>300.000₫</td>
+              </tr>
+              <tr>
+                <td>Full-body</td>
+                <td>240.000₫</td>
+                <td>310.000₫</td>
+                <td>400.000₫</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Alt Chibi -->
+        <div class="price-card">
+          <h2 class="price-card-title"><i data-lucide="star"></i> Chibi</h2>
+          <table class="price-table">
+            <thead>
+              <tr>
+                <th>Loại</th>
+                <th>Sketch</th>
+                <th>Line</th>
+                <th>Color</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Full-body</td>
+                <td>100.000₫</td>
+                <td>150.000₫</td>
+                <td>200.000₫</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- TERMS OF SERVICE -->
       <div class="tos-section">
         <h2 class="page-title reveal" style="margin-bottom: 1.5rem;">
-          <span class="page-title-accent"><i data-lucide="scroll-text"></i></span> Điều Khoản Dịch Vụ
+          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Điều Khoản Dịch Vụ
         </h2>
 
         <!-- I. Về Commission -->
@@ -226,7 +349,7 @@ export function renderPrice() {
         </div>
 
         <p class="reveal" style="text-align: center; margin-top: 2rem; color: var(--pink-500); font-weight: 600; font-size: 1.1rem;">
-          <i data-lucide="flower" style="display:inline-block;width:18px;height:18px;vertical-align:middle;"></i> Vui lòng đọc thật kĩ trước khi đặt commission <i data-lucide="flower" style="display:inline-block;width:18px;height:18px;vertical-align:middle;"></i>
+          <img src="/img/concept/logo.png" alt="" class="subtitle-logo" /> Vui lòng đọc thật kĩ trước khi đặt commission <img src="/img/concept/logo.png" alt="" class="subtitle-logo" />
         </p>
       </div>
     </section>

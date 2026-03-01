@@ -11,13 +11,16 @@ export function renderHome() {
         />
       </div>
       <h1 class="hero-title">Lilith</h1>
-      <p class="hero-subtitle"><i data-lucide="sparkles"></i> Anime & Chibi Artist <i data-lucide="sparkles"></i></p>
+      <p class="hero-subtitle"><img src="/img/concept/logo.png" alt="" class="subtitle-logo" /> Anime & Chibi Artist <img src="/img/concept/logo.png" alt="" class="subtitle-logo" /></p>
       <div class="hero-cta">
         <a href="#gallery" class="btn btn-primary" data-page="gallery" onclick="event.preventDefault(); window.location.hash='gallery';">
           <i data-lucide="palette"></i> Xem Gallery
         </a>
         <a href="#price" class="btn btn-outline" data-page="price" onclick="event.preventDefault(); window.location.hash='price';">
           <i data-lucide="coins"></i> Bảng Giá
+        </a>
+        <a href="#about" class="btn btn-outline" data-page="about" onclick="event.preventDefault(); window.location.hash='about';">
+          <i data-lucide="sparkles"></i> About Me
         </a>
       </div>
       <div class="scroll-indicator">

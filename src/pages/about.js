@@ -15,7 +15,7 @@ export function renderAbout() {
     <section class="about-page">
       <div class="page-header reveal">
         <h1 class="page-title">
-          <span class="page-title-accent"><i data-lucide="flower"></i></span> About Me
+          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> About Me
         </h1>
         <p class="page-desc">Xin chào, mình là Lilith!</p>
       </div>
@@ -41,14 +41,14 @@ export function renderAbout() {
           </p>
           <p>
             Cảm ơn bạn đã ghé thăm portfolio của mình! Nếu bạn thích art style của mình,
-            đừng ngần ngại liên hệ để đặt commission nhé <i data-lucide="flower" style="display:inline-block;width:16px;height:16px;vertical-align:middle;"></i>
+            đừng ngần ngại liên hệ để đặt commission nhé <img src="/img/concept/logo.png" alt="" class="subtitle-logo" />
           </p>
         </div>
       </div>
 
       <!-- Lilith Gallery -->
       <div class="about-section">
-        <h2 class="about-section-title reveal"><i data-lucide="flower"></i> Lilith Gallery</h2>
+        <h2 class="about-section-title reveal"><img src="/img/concept/logo.png" alt="" class="section-logo" /> Lilith Gallery</h2>
         <div class="lilith-gallery">
           ${lilithImages.map((img, i) => `
             <div class="lilith-card stagger-${Math.min(i + 1, 7)}">
