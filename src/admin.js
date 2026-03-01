@@ -297,8 +297,15 @@ function replaceImage(originalPath, card) {
   const input = document.createElement('input');
   input.type = 'file';
   input.accept = 'image/*';
+  input.style.position = 'fixed';
+  input.style.opacity = '0';
+  input.style.top = '0';
+  input.style.left = '0';
+  document.body.appendChild(input);
+
   input.onchange = async (e) => {
     const file = e.target.files[0];
+    document.body.removeChild(input);
     if (!file) return;
 
     card.querySelector('.admin-img-name').textContent = 'Đang xử lý...';
@@ -315,7 +322,8 @@ function replaceImage(originalPath, card) {
       console.error(err);
     }
   };
-  input.click();
+
+  setTimeout(() => input.click(), 50);
 }
 
 // ==================== POSITION EDITOR ====================
