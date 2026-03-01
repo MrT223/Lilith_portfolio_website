@@ -5,9 +5,9 @@ export function renderHome() {
         <div class="avatar-ring"></div>
         <img
           class="hero-avatar"
-          src="/img/lilith/lilith02.jpg"
+          src="/img/lilith/lilith_main.jpg"
           alt="Lilith Avatar"
-          data-lightbox="/img/lilith/lilith02.jpg"
+          data-lightbox="/img/lilith/lilith_main.jpg"
         />
       </div>
       <h1 class="hero-title">Lilith</h1>

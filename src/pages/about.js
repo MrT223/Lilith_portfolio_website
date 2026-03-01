@@ -21,9 +21,9 @@ export function renderAbout() {
         <div class="about-avatar-section">
           <img
             class="about-avatar"
-            src="/img/lilith/lilith02.jpg"
+            src="/img/lilith/lilith_main.jpg"
             alt="Lilith"
-            data-lightbox="/img/lilith/lilith02.jpg"
+            data-lightbox="/img/lilith/lilith_main.jpg"
           />
         </div>
         <div class="about-text">
@@ -54,6 +54,7 @@ export function renderAbout() {
                 alt="Lilith artwork ${i + 1}"
                 data-lightbox="/img/lilith/${img}"
                 loading="lazy"
+                ${img === 'lilith01.jpg' ? 'style="object-position: 90% center;"' : ''}
               />
             </div>
           `).join('')}
