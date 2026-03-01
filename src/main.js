@@ -3,6 +3,7 @@ import { renderHome } from './pages/home.js';
 import { renderGallery } from './pages/gallery.js';
 import { renderPrice } from './pages/price.js';
 import { renderAbout } from './pages/about.js';
+import { initAdminSecret, loadAdminSettings, applyImageOverrides } from './admin.js';
 
 const pages = {
   home: renderHome,
@@ -37,6 +38,7 @@ function renderPage(page) {
     container.innerHTML = renderer();
     updateActiveNav(page);
     createIcons({ icons });
+    applyImageOverrides();
     initPageEffects();
   }
 }
@@ -332,6 +334,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const page = getPageFromHash();
   currentPage = page;
   renderPage(page);
+
+  initAdminSecret();
+  loadAdminSettings();
 
   window.addEventListener('hashchange', () => {
     const newPage = getPageFromHash();
