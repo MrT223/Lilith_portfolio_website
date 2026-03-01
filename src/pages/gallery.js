@@ -1,6 +1,8 @@
 export function renderGallery() {
-  const normalImages = Array.from({ length: 7 }, (_, i) => `normal0${i + 1}.jpg`);
-  const chibiImages = Array.from({ length: 7 }, (_, i) => `chibi0${i + 1}.jpg`);
+  const normalImages = Array.from({ length: 9 }, (_, i) => `normal0${i + 1}.jpg`);
+  const chibiImages = Array.from({ length: 9 }, (_, i) => `chibi0${i + 1}.jpg`);
+
+  const shiftDown = ['normal03.jpg', 'normal06.jpg', 'normal08.jpg', 'normal09.jpg'];
 
   function createGrid(images, folder, category) {
     return `
@@ -12,6 +14,7 @@ export function renderGallery() {
               alt="${category} artwork ${i + 1}"
               data-lightbox="/img/Sample/${folder}/${img}"
               loading="lazy"
+              ${shiftDown.includes(img) ? 'style="object-position: center 20%;"' : ''}
             />
           </div>
         `).join('')}

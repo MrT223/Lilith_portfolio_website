@@ -1,5 +1,8 @@
 export function renderAbout() {
-  const lilithImages = Array.from({ length: 6 }, (_, i) => `lilith0${i + 1}.jpg`);
+  const lilithImages = [
+    'lilith_main.jpg', 'lilith01.jpg', 'lilith02.jpg', 'lilith03.jpg',
+    'lilith04.jpg', 'lilith05.jpg', 'lilith06.jpg', 'lilith07.jpg', 'lilith08.jpg'
+  ];
 
   const altArt = [
     { file: 'lilith_gachiakuta.jpg', label: 'Gachiakuta Style' },
