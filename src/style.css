@@ -734,14 +734,22 @@ body {
 }
 
 .tos-toggle {
-  font-size: 1.5rem;
   color: var(--pink-400);
   transition: var(--transition);
-  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: rotate(-45deg);
+}
+
+.tos-toggle .lucide {
+  width: 22px;
+  height: 22px;
 }
 
 .tos-card.open .tos-toggle {
-  transform: rotate(45deg);
+  transform: rotate(180deg);
+  color: var(--pink-600);
 }
 
 .tos-body {
@@ -1003,7 +1011,6 @@ body {
   background: rgba(255, 240, 245, 0.15);
   border: 2px solid rgba(255, 255, 255, 0.3);
   color: var(--white);
-  font-size: 2rem;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -1013,11 +1020,17 @@ body {
   justify-content: center;
   transition: var(--transition-spring);
   backdrop-filter: blur(10px);
+  transform: rotate(0deg);
+}
+
+.lightbox-close .lucide {
+  width: 24px;
+  height: 24px;
 }
 
 .lightbox-close:hover {
   background: rgba(255, 145, 164, 0.5);
-  transform: rotate(90deg) scale(1.1);
+  transform: rotate(180deg) scale(1.1);
 }
 
 /* ==================== FOOTER ==================== */

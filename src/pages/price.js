@@ -129,7 +129,7 @@ export function renderPrice() {
         <div class="tos-card open">
           <div class="tos-header">
             <h3><i data-lucide="clipboard-list"></i> I. Về Commission</h3>
-            <span class="tos-toggle">+</span>
+            <span class="tos-toggle"><i data-lucide="flower"></i></span>
           </div>
           <div class="tos-body">
             <div class="tos-body-inner">
@@ -177,7 +177,7 @@ export function renderPrice() {
         <div class="tos-card">
           <div class="tos-header">
             <h3><i data-lucide="user"></i> II. Về Khách Hàng</h3>
-            <span class="tos-toggle">+</span>
+            <span class="tos-toggle"><i data-lucide="flower"></i></span>
           </div>
           <div class="tos-body">
             <div class="tos-body-inner">
@@ -205,7 +205,7 @@ export function renderPrice() {
         <div class="tos-card">
           <div class="tos-header">
             <h3><i data-lucide="brush"></i> III. Về Artist</h3>
-            <span class="tos-toggle">+</span>
+            <span class="tos-toggle"><i data-lucide="flower"></i></span>
           </div>
           <div class="tos-body">
             <div class="tos-body-inner">
