@@ -31,21 +31,25 @@ async function dbWrite(key, value) {
   return data;
 }
 
-async function uploadImage(path, file) {
-  const ext = file.name.split('.').pop();
-  const storagePath = path.replace(/^\//, '').replace(/\//g, '_');
-  
-  const { data, error } = await supabase.storage
-    .from('images')
-    .upload(storagePath, file, { upsert: true, contentType: file.type });
-
-  if (error) {
-    console.error('Upload error:', error);
-    return null;
-  }
-
-  const { data: urlData } = supabase.storage.from('images').getPublicUrl(storagePath);
-  return urlData.publicUrl;
+function resizeImageToBase64(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxW = 1000;
+        let w = img.width, h = img.height;
+        if (w > maxW) { h = (maxW / w) * h; w = maxW; }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // ==================== SECRET BUTTON ====================
@@ -189,7 +193,6 @@ async function showAdminPanel() {
   document.body.appendChild(panel);
   requestAnimationFrame(() => panel.classList.add('active'));
 
-  // CMS toggle
   panel.querySelectorAll('[data-cms]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const status = btn.dataset.cms;
@@ -201,7 +204,6 @@ async function showAdminPanel() {
     });
   });
 
-  // Tab switching
   panel.querySelectorAll('.admin-tab').forEach(tab => {
     tab.addEventListener('click', () => {
       panel.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
@@ -247,7 +249,6 @@ async function renderImageGrid(tab) {
   if (!grid) return;
   grid.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1">Đang tải...</p>';
 
-  // Batch fetch all settings in ONE query
   const { data: allSettings } = await supabase
     .from('admin_settings')
     .select('key, value')
@@ -300,17 +301,18 @@ function replaceImage(originalPath, card) {
     const file = e.target.files[0];
     if (!file) return;
 
-    card.querySelector('.admin-img-name').textContent = 'Đang tải lên...';
+    card.querySelector('.admin-img-name').textContent = 'Đang xử lý...';
 
-    const publicUrl = await uploadImage(originalPath, file);
-    if (publicUrl) {
-      await dbWrite(`img_${originalPath}`, publicUrl);
-      card.querySelector('img').src = publicUrl;
+    try {
+      const dataUrl = await resizeImageToBase64(file);
+      await dbWrite(`img_${originalPath}`, dataUrl);
+      card.querySelector('img').src = dataUrl;
       card.querySelector('.admin-img-name').textContent = originalPath.split('/').pop();
       applyImageOverrides();
       resetLogoutTimer();
-    } else {
-      card.querySelector('.admin-img-name').textContent = 'Lỗi upload!';
+    } catch (err) {
+      card.querySelector('.admin-img-name').textContent = 'Lỗi!';
+      console.error(err);
     }
   };
   input.click();
