@@ -17,7 +17,7 @@ export function renderAbout() {
         <h1 class="page-title">
           <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> About Me
         </h1>
-        <p class="page-desc">Xin chào, mình là Lilith!</p>
+        <p class="page-desc">Xin chào, tớ là Lilith!</p>
       </div>
 
       <div class="about-intro reveal">
@@ -31,21 +31,110 @@ export function renderAbout() {
         </div>
         <div class="about-text">
           <h2>Lilith <i data-lucide="sparkles"></i></h2>
-          <p>
-            Mình là một artist chuyên vẽ anime và chibi. Mình yêu thích việc sáng tạo nhân vật
-            với phong cách màu sắc tươi sáng, nét vẽ mềm mại và đáng yêu.
-          </p>
-          <p>
-            Ngoài phong cách chính, mình cũng thích thử sức với nhiều art style khác nhau
-            lấy cảm hứng từ các manga/anime nổi tiếng.
-          </p>
-          <p>
-            Cảm ơn bạn đã ghé thăm portfolio của mình! Nếu bạn thích art style của mình,
-            đừng ngần ngại liên hệ để đặt commission nhé <img src="/img/concept/logo.png" alt="" class="subtitle-logo" />
-          </p>
+
+          <div class="about-info-grid">
+            <div class="about-info-item">
+              <span class="info-label"><i data-lucide="paw-print"></i> Chủng loài</span>
+              <span class="info-value">Hồ ly — Yêu thú</span>
+            </div>
+            <div class="about-info-item">
+              <span class="info-label"><i data-lucide="hourglass"></i> Tuổi</span>
+              <span class="info-value">400 tuổi</span>
+            </div>
+            <div class="about-info-item">
+              <span class="info-label"><i data-lucide="cake"></i> Ngày sinh</span>
+              <span class="info-value">27/02</span>
+            </div>
+            <div class="about-info-item">
+              <span class="info-label"><i data-lucide="heart"></i> Giới tính</span>
+              <span class="info-value">Nữ</span>
+            </div>
+          </div>
+
+          <div class="about-personality">
+            <h3><i data-lucide="flame"></i> Tính cách</h3>
+            <div class="personality-tags">
+              <span class="personality-tag">Ham vui</span>
+              <span class="personality-tag">Nhát gan</span>
+              <span class="personality-tag">Tốt bụng</span>
+              <span class="personality-tag">Thích bày trò</span>
+              <span class="personality-tag">Hay tò mò</span>
+              <span class="personality-tag">Thích điều mới</span>
+              <span class="personality-tag">Thích du ngoạn</span>
+            </div>
+          </div>
+
           <a href="https://www.facebook.com/profile.php?id=61580142310861" class="btn btn-primary about-contact-btn" target="_blank" rel="noopener noreferrer">
             <i data-lucide="message-circle"></i> Liên hệ qua Facebook
           </a>
+        </div>
+      </div>
+
+      <!-- Backstory -->
+      <div class="about-section">
+        <h2 class="about-section-title reveal"><i data-lucide="book-open"></i> Câu chuyện của Lilith</h2>
+        <div class="backstory-container reveal">
+          <div class="backstory-chapter">
+            <div class="chapter-marker">
+              <span class="chapter-icon"><i data-lucide="trees"></i></span>
+              <span class="chapter-line"></span>
+            </div>
+            <div class="chapter-content">
+              <h3>Khu rừng phía Nam</h3>
+              <p>
+                Lilith được sinh ra trong một khu rừng phía Nam lục địa — một nơi nhìn từ ngoài vào chẳng có gì đặc biệt, 
+                nhưng đó vừa là nhà, vừa là một phần đẹp đẽ từng sống động trước mắt nàng. 
+                Mọi người trong rừng đều cảnh báo nàng về sự nguy hiểm phía bên ngoài khu rừng, 
+                nhưng với tính hiếu kỳ bẩm sinh, một đêm nọ nàng quyết định lén rời khỏi rừng 
+                để ngắm nhìn phía bên ngoài thế giới.
+              </p>
+            </div>
+          </div>
+          <div class="backstory-chapter">
+            <div class="chapter-marker">
+              <span class="chapter-icon"><i data-lucide="flame"></i></span>
+              <span class="chapter-line"></span>
+            </div>
+            <div class="chapter-content">
+              <h3>Biển lửa</h3>
+              <p>
+                Đến khi trở lại nơi nàng từng gọi là nhà, giờ đang nằm gọn trong biển lửa rực đỏ. 
+                Ngọn lửa lấy đi hầu như là tất cả của nàng, nhưng vẫn không thể trở thành ngọn lửa oán hận 
+                mà cướp đi bản tính tốt bụng của Lilith.
+              </p>
+            </div>
+          </div>
+          <div class="backstory-chapter">
+            <div class="chapter-marker">
+              <span class="chapter-icon"><i data-lucide="sparkles"></i></span>
+              <span class="chapter-line"></span>
+            </div>
+            <div class="chapter-content">
+              <h3>Thiếu nữ Yêu hồ</h3>
+              <p>
+                Nhiều năm sau, cô bé hồ ly năm đó giờ đã là một thiếu nữ Yêu hồ. 
+                Nàng vẫn như vậy — vẫn giữ được bản chất của mình, không tranh đoạt, 
+                không tìm kiếm sức mạnh để báo thù mà chỉ tận hưởng, khám phá vẻ đẹp của thế giới, 
+                sống cuộc đời tự do tự tại.
+              </p>
+            </div>
+          </div>
+          <div class="backstory-chapter">
+            <div class="chapter-marker">
+              <span class="chapter-icon"><i data-lucide="moon"></i></span>
+            </div>
+            <div class="chapter-content">
+              <h3>Người đưa tiễn dịu dàng</h3>
+              <p>
+                Trên hành trình trăm năm của mình, nàng chứng kiến vô số sinh mệnh mất đi ngay trước mắt 
+                nên đã chọn sử dụng sức mạnh của mình để trở thành người đưa tiễn dịu dàng nhất. 
+                Khi một ngọn lửa sinh mệnh sắp vụt tắt, nàng sẽ đến bên cạnh, nhẹ nhàng thu nhận 
+                chút sinh khí ít ỏi cuối cùng và đổi lại — nàng dùng yêu lực dệt ra Mộng Cảnh đẹp đẽ 
+                mà kẻ sắp ra đi muốn thấy nhất, để giúp họ rời đi trong sự yên bình. 
+                Đó cũng là sự trao đổi công bằng và nhân từ nhất, xuất phát từ tình yêu nàng dành cho thế giới này.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -1065,6 +1065,171 @@ body {
   font-size: 1.05rem;
 }
 
+/* Info Grid */
+.about-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.about-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.8rem 1rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.about-info-item:hover {
+  background: rgba(255, 183, 197, 0.12);
+  border-color: var(--pink-300);
+  transform: translateY(-2px);
+}
+
+.info-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--pink-500);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.info-label .lucide,
+.info-label [data-lucide] {
+  width: 14px;
+  height: 14px;
+}
+
+.info-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Personality */
+.about-personality {
+  margin-bottom: 1.5rem;
+}
+
+.about-personality h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--pink-600);
+  margin-bottom: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.about-personality h3 .lucide,
+.about-personality h3 [data-lucide] {
+  width: 18px;
+  height: 18px;
+  color: var(--pink-400);
+}
+
+.personality-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.personality-tag {
+  padding: 0.4rem 1rem;
+  background: linear-gradient(135deg, rgba(255, 183, 197, 0.15), rgba(255, 228, 239, 0.2));
+  border: 1px solid rgba(255, 183, 197, 0.3);
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--pink-600);
+  transition: var(--transition-fast);
+  cursor: default;
+}
+
+.personality-tag:hover {
+  background: linear-gradient(135deg, var(--pink-300), var(--pink-400));
+  color: var(--white);
+  border-color: transparent;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 15px rgba(255, 145, 164, 0.35);
+}
+
+/* Backstory */
+.backstory-container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1rem 0;
+}
+
+.backstory-chapter {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 0;
+}
+
+.chapter-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 44px;
+}
+
+.chapter-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--pink-300), var(--pink-400));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(255, 145, 164, 0.4);
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.chapter-icon .lucide,
+.chapter-icon [data-lucide] {
+  width: 20px;
+  height: 20px;
+}
+
+.chapter-line {
+  flex: 1;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--pink-300), rgba(255, 183, 197, 0.2));
+  margin-top: 0.3rem;
+  min-height: 30px;
+}
+
+.chapter-content {
+  padding-bottom: 2rem;
+  flex: 1;
+}
+
+.chapter-content h3 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--pink-600);
+  margin-bottom: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.chapter-content p {
+  color: var(--text-secondary);
+  line-height: 1.85;
+  font-size: 0.98rem;
+}
+
 .about-section {
   margin-bottom: 3.5rem;
 }
@@ -1522,6 +1687,55 @@ body {
   .alt-art-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+  }
+
+  .about-info-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .about-info-item {
+    padding: 0.6rem 0.8rem;
+  }
+
+  .info-label {
+    font-size: 0.72rem;
+  }
+
+  .info-value {
+    font-size: 0.9rem;
+  }
+
+  .personality-tag {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.8rem;
+  }
+
+  .backstory-chapter {
+    gap: 1rem;
+  }
+
+  .chapter-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .chapter-icon .lucide,
+  .chapter-icon [data-lucide] {
+    width: 16px;
+    height: 16px;
+  }
+
+  .chapter-marker {
+    width: 36px;
+  }
+
+  .chapter-content h3 {
+    font-size: 1.1rem;
+  }
+
+  .chapter-content p {
+    font-size: 0.92rem;
   }
 
   /* Lightbox mobile */

@@ -282,7 +282,7 @@ export function renderPrice() {
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="ban"></i></span>
-                <span><strong>Không nhận vẽ:</strong> background, pose quá khó, người già, người thật, furry, mecha, NSFW, mật độ chi tiết cao.</span>
+                <span><strong>Không nhận vẽ:</strong> background, pose quá khó, người già, người thật, furry, mecha, mật độ chi tiết cao.</span>
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="gem"></i></span>

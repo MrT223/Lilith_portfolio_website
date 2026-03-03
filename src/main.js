@@ -62,6 +62,7 @@ function initNav() {
 
   navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
+      if (link.classList.contains('nav-contact')) return;
       e.preventDefault();
       const page = link.dataset.page;
       window.location.hash = page;
