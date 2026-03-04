@@ -72,21 +72,21 @@ export function renderPrice() {
             <tbody>
               <tr>
                 <td>Headshot</td>
-                <td>50.000₫</td>
                 <td>80.000₫</td>
-                <td>100.000₫</td>
+                <td>120.000₫</td>
+                <td>180.000₫</td>
               </tr>
               <tr>
                 <td>Half-body</td>
-                <td>70.000₫</td>
                 <td>120.000₫</td>
-                <td>200.000₫</td>
+                <td>170.000₫</td>
+                <td>300.000₫</td>
               </tr>
               <tr>
                 <td>Full-body</td>
-                <td>100.000₫</td>
                 <td>150.000₫</td>
-                <td>300.000₫</td>
+                <td>250.000₫</td>
+                <td>500.000₫</td>
               </tr>
             </tbody>
           </table>
