@@ -148,7 +148,7 @@ async function loadSupabaseData() {
     ];
 
     for (const { category, images, folder, defaults } of updates) {
-      const hasChanges = JSON.stringify(images) !== JSON.stringify(defaults) || Object.keys(overrides).length > 0;
+      const hasChanges = JSON.stringify(images) !== JSON.stringify(defaults);
       if (!hasChanges) continue;
 
       const gridEl = document.querySelector(`.gallery-grid-section[data-category="${category}"]`);
@@ -161,6 +161,12 @@ async function loadSupabaseData() {
       if (newGrid) {
         newGrid.style.display = isVisible ? '' : 'none';
         gridEl.replaceWith(newGrid);
+        // Reveal new items with stagger if grid is visible
+        if (isVisible) {
+          newGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
+            setTimeout(() => item.classList.add('visible'), i * 80);
+          });
+        }
       }
     }
   } catch (e) {

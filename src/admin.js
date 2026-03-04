@@ -166,6 +166,9 @@ async function showAdminPanel() {
             <button class="admin-btn ${cmsStatus === 'open' ? 'admin-btn-green active' : 'admin-btn-green'}" data-cms="open">
               <span class="cms-dot-lg"></span> OPEN
             </button>
+            <button class="admin-btn ${cmsStatus === 'waitlist' ? 'admin-btn-yellow active' : 'admin-btn-yellow'}" data-cms="waitlist">
+              <span class="cms-dot-lg"></span> NHẬN WL
+            </button>
             <button class="admin-btn ${cmsStatus === 'close' ? 'admin-btn-red active' : 'admin-btn-red'}" data-cms="close">
               <span class="cms-dot-lg"></span> CLOSE
             </button>
@@ -565,7 +568,8 @@ export function applyCmsStatus(status) {
   const badge = document.querySelector('.cms-status');
   if (!badge) return;
   badge.dataset.status = status;
-  badge.innerHTML = `<span class="cms-dot"></span> CMS: ${status.toUpperCase()}`;
+  const labels = { open: 'OPEN', waitlist: 'NHẬN WL', close: 'CLOSE' };
+  badge.innerHTML = `<span class="cms-dot"></span> CMS: ${labels[status] || status.toUpperCase()}`;
 }
 
 export async function applyImageOverrides() {

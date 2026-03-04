@@ -162,10 +162,19 @@ function initPageEffects() {
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-  document.querySelectorAll('.reveal, .gallery-item, .price-card, .tos-card, .lilith-card, .alt-art-card').forEach((el, i) => {
+  document.querySelectorAll('.reveal, .price-card, .tos-card, .lilith-card, .alt-art-card').forEach((el, i) => {
     el.style.transitionDelay = `${Math.min(i * 0.08, 0.6)}s`;
     observer.observe(el);
   });
+
+  // Gallery items: force reveal with stagger for the active grid
+  // (IntersectionObserver doesn't reliably fire during SPA fade transitions)
+  const activeGrid = document.querySelector('.gallery-grid-section[style=""], .gallery-grid-section:not([style*="display:none"]):not([style*="display: none"])');
+  if (activeGrid) {
+    activeGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
+      setTimeout(() => item.classList.add('visible'), i * 80);
+    });
+  }
 
   // TOS accordion
   document.querySelectorAll('.tos-header').forEach(header => {
