@@ -138,6 +138,31 @@ async function loadSupabaseData() {
 
     cachedImages = { normal, chibi, chibiych, anime };
     cachedOverrides = overrides;
+
+    // Cập nhật từng grid có dữ liệu khác defaults
+    const updates = [
+      { category: 'normal', images: normal, folder: 'Normal', defaults: DEFAULT_IMAGES.normal },
+      { category: 'chibi', images: chibi, folder: 'ChibiNew', defaults: DEFAULT_IMAGES.chibi },
+      { category: 'chibiych', images: chibiych, folder: 'Chibi', defaults: DEFAULT_IMAGES.chibiych },
+      { category: 'anime', images: anime, folder: 'AnimeStyle', defaults: DEFAULT_IMAGES.anime },
+    ];
+
+    for (const { category, images, folder, defaults } of updates) {
+      const hasChanges = JSON.stringify(images) !== JSON.stringify(defaults) || Object.keys(overrides).length > 0;
+      if (!hasChanges) continue;
+
+      const gridEl = document.querySelector(`.gallery-grid-section[data-category="${category}"]`);
+      if (!gridEl) continue;
+
+      const isVisible = gridEl.style.display !== 'none';
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = buildGrid(images, folder, category, true, overrides);
+      const newGrid = tempDiv.firstElementChild;
+      if (newGrid) {
+        newGrid.style.display = isVisible ? '' : 'none';
+        gridEl.replaceWith(newGrid);
+      }
+    }
   } catch (e) {
     // Supabase lỗi → giữ nguyên ảnh mặc định
   }
