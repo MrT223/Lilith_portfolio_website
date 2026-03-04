@@ -790,6 +790,15 @@ body {
   transform: scale(1.05);
 }
 
+.gallery-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-light);
+  font-size: 1.05rem;
+  font-style: italic;
+}
+
 /* ==================== PRICE PAGE ==================== */
 .price-page {
   padding: 2rem;
@@ -2223,6 +2232,38 @@ body {
   background: rgba(0,0,0,0.8);
 }
 
+.admin-img-btn .lucide,
+.admin-img-btn [data-lucide] {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-panel-header h3 .lucide,
+.admin-panel-header h3 [data-lucide] {
+  width: 18px;
+  height: 18px;
+}
+
+.admin-hint .lucide,
+.admin-hint [data-lucide] {
+  width: 12px;
+  height: 12px;
+  vertical-align: -1px;
+}
+
+.admin-img-name .lucide,
+.admin-img-name [data-lucide] {
+  width: 10px;
+  height: 10px;
+}
+
+.admin-add-icon .lucide,
+.admin-add-icon [data-lucide] {
+  width: 28px;
+  height: 28px;
+  color: var(--pink-400);
+}
+
 .admin-img-name {
   position: absolute;
   top: 0;
@@ -2236,6 +2277,48 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.admin-img-add {
+  border: 2px dashed rgba(255, 145, 164, 0.5);
+  background: rgba(255, 183, 197, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-img-add:hover {
+  border-color: var(--pink-400);
+  background: rgba(255, 183, 197, 0.18);
+  transform: scale(1.03);
+}
+
+.admin-add-icon {
+  font-size: 2rem;
+  margin-bottom: 0.3rem;
+  opacity: 0.6;
+}
+
+.admin-img-add .admin-img-name {
+  position: static;
+  background: none;
+  color: var(--pink-500);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.admin-img-delete:hover {
+  background: rgba(220, 50, 50, 0.8) !important;
+}
+
+.admin-img-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
 }
 
 /* Position editor */
@@ -2324,11 +2407,170 @@ body {
 
 /* Mobile optimizations for admin */
 @media (max-width: 480px) {
-  .admin-img-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .admin-panel-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+    margin: 0;
+  }
+
+  .admin-panel-header {
+    padding: 0.8rem 1rem;
+    border-radius: 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .admin-panel-header h3 {
+    font-size: 1rem;
   }
 
   .admin-panel-body {
-    padding: 1rem;
+    padding: 0.8rem;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-section h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .admin-hint {
+    font-size: 0.72rem;
+    margin-bottom: 0.6rem;
+  }
+
+  /* CMS toggle — stack on very small screens */
+  .admin-cms-toggle {
+    gap: 0.5rem;
+  }
+
+  .admin-cms-toggle .admin-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.8rem;
+    flex: 1;
+  }
+
+  /* Tabs — scrollable horizontally */
+  .admin-img-tabs {
+    gap: 0.3rem;
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.3rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .admin-img-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-tab {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.7rem;
+    flex-shrink: 0;
+  }
+
+  /* Image grid — 2 columns */
+  .admin-img-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .admin-img-card {
+    border-radius: 8px;
+  }
+
+  /* Bigger touch targets for action buttons */
+  .admin-img-actions {
+    gap: 1px;
+  }
+
+  .admin-img-btn {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+    min-height: 36px;
+  }
+
+  .admin-img-name {
+    font-size: 0.55rem;
+    padding: 0.15rem 0.3rem;
+  }
+
+  /* Add image card */
+  .admin-add-icon {
+    font-size: 1.6rem;
+  }
+
+  .admin-img-add .admin-img-name {
+    font-size: 0.7rem;
+  }
+
+  /* Position editor */
+  .admin-pos-content {
+    width: 100%;
+    max-width: 100%;
+    max-height: 100vh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .admin-pos-preview-wrap {
+    padding: 0 0.8rem;
+  }
+
+  .admin-pos-preview {
+    aspect-ratio: 1;
+  }
+
+  .admin-pos-info {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  /* Modal buttons */
+  .admin-modal-btns {
+    padding: 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .admin-modal-btns .admin-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+    min-height: 40px;
+  }
+
+  /* Footer */
+  .admin-panel-footer {
+    padding: 0.8rem 1rem;
+    padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
+  }
+
+  .admin-panel-footer .admin-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 40px;
+  }
+}
+
+/* Extra small screens (iPhone SE, etc.) */
+@media (max-width: 375px) {
+  .admin-tab {
+    padding: 0.35rem 0.55rem;
+    font-size: 0.65rem;
+  }
+
+  .admin-img-grid {
+    gap: 0.4rem;
+  }
+
+  .admin-img-btn {
+    padding: 0.45rem;
+    font-size: 0.8rem;
   }
 }

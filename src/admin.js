@@ -1,4 +1,5 @@
 import { supabase } from './supabase.js';
+import { createIcons, icons } from 'lucide';
 
 const ADMIN_HASH = 'f817f67b76c9206025474f3cbdccb7cc5e3c04970c88d7ef4f56b1551e45548d';
 const TIMEOUT_MS = 15 * 60 * 1000;
@@ -18,7 +19,7 @@ async function dbRead(key) {
     .from('admin_settings')
     .select('value')
     .eq('key', key)
-    .single();
+    .maybeSingle();
   return data?.value || null;
 }
 
@@ -154,7 +155,7 @@ async function showAdminPanel() {
   panel.innerHTML = `
     <div class="admin-panel-content">
       <div class="admin-panel-header">
-        <h3>🔧 Quản lý trang</h3>
+        <h3><i data-lucide="settings"></i> Quản lý trang</h3>
         <button class="admin-close-btn" id="admin-close">&times;</button>
       </div>
 
@@ -173,9 +174,12 @@ async function showAdminPanel() {
 
         <div class="admin-section">
           <h4>Quản lý ảnh</h4>
-          <p class="admin-hint">Chạm 📷 để thay ảnh. Chạm ✋ để chỉnh vị trí focus.</p>
+          <p class="admin-hint">Chạm <i data-lucide="camera"></i> để thay ảnh. Chạm <i data-lucide="move"></i> để chỉnh vị trí focus. Chạm <i data-lucide="plus"></i> để thêm ảnh mới.</p>
           <div class="admin-img-tabs">
-            <button class="admin-tab active" data-tab="gallery">Gallery</button>
+            <button class="admin-tab active" data-tab="gallery-normal">Normal</button>
+            <button class="admin-tab" data-tab="gallery-chibi">Chibi</button>
+            <button class="admin-tab" data-tab="gallery-chibi-ych">Chibi YCH</button>
+            <button class="admin-tab" data-tab="gallery-anime">Anime Style</button>
             <button class="admin-tab" data-tab="lilith">Lilith</button>
             <button class="admin-tab" data-tab="alt">Alt Style</button>
             <button class="admin-tab" data-tab="main">Home/About</button>
@@ -192,6 +196,7 @@ async function showAdminPanel() {
 
   document.body.appendChild(panel);
   requestAnimationFrame(() => panel.classList.add('active'));
+  createIcons({ icons });
 
   panel.querySelectorAll('[data-cms]').forEach(btn => {
     btn.addEventListener('click', async () => {
@@ -216,33 +221,64 @@ async function showAdminPanel() {
   document.getElementById('admin-close').addEventListener('click', () => closeModal(panel));
   document.getElementById('admin-logout').addEventListener('click', exitAdminMode);
 
-  renderImageGrid('gallery');
+  renderImageGrid('gallery-normal');
 }
 
 // ==================== IMAGE GRID ====================
-const IMAGE_MAP = {
-  gallery: {
-    images: [
-      ...Array.from({length: 9}, (_, i) => `/img/Sample/Normal/normal0${i+1}.jpg`),
-      ...Array.from({length: 9}, (_, i) => `/img/Sample/Chibi/chibi0${i+1}.jpg`),
-    ]
-  },
-  lilith: {
-    images: ['lilith01','lilith02','lilith03','lilith04','lilith05','lilith06','lilith07','lilith08']
-      .map(n => `/img/lilith/${n}.jpg`),
-  },
-  alt: {
-    images: [
-      '/img/lilith_alternative_style/lilith_gachiakuta.jpg',
-      '/img/lilith_alternative_style/lilith_kny.jpg',
-      '/img/lilith_alternative_style/lilith_mha.jpg',
-      '/img/lilith_alternative_style/lilith_wb.jpg',
-    ]
-  },
+// Categories that support adding/deleting images
+const GALLERY_CATEGORIES = {
+  'gallery-normal': { folder: 'Normal', supabaseKey: 'gallery_images_normal', basePath: '/img/Sample/Normal/' },
+  'gallery-chibi': { folder: 'ChibiNew', supabaseKey: 'gallery_images_chibi_new', basePath: '/img/Sample/ChibiNew/' },
+  'gallery-chibi-ych': { folder: 'Chibi', supabaseKey: 'gallery_images_chibi', basePath: '/img/Sample/Chibi/' },
+  'gallery-anime': { folder: 'AnimeStyle', supabaseKey: 'gallery_images_anime', basePath: '/img/Sample/AnimeStyle/' },
+  'lilith': { folder: 'lilith', supabaseKey: 'gallery_images_lilith', basePath: '/img/lilith/' },
+  'alt': { folder: 'lilith_alternative_style', supabaseKey: 'gallery_images_alt', basePath: '/img/lilith_alternative_style/' },
+};
+
+const DEFAULT_IMAGES = {
+  'gallery-normal': [
+    'normal01.jpg', 'normal02.jpg', 'normal03.jpg',
+    'normal04.jpg', 'normal05.jpg', 'normal06.jpg',
+    'normal07.jpg', 'normal08.jpg', 'normal09.jpg',
+  ],
+  'gallery-chibi': [],
+  'gallery-chibi-ych': [
+    'chibi01.jpg', 'chibi02.jpg', 'chibi03.jpg',
+    'chibi04.jpg', 'chibi05.jpg', 'chibi06.jpg',
+    'chibi07.jpg', 'chibi08.jpg', 'chibi09.jpg',
+  ],
+  'gallery-anime': [],
+  'lilith': [
+    'lilith01.jpg', 'lilith02.jpg', 'lilith03.jpg', 'lilith04.jpg',
+    'lilith05.jpg', 'lilith06.jpg', 'lilith07.jpg', 'lilith08.jpg',
+  ],
+  'alt': [
+    'lilith_gachiakuta.jpg', 'lilith_kny.jpg',
+    'lilith_mha.jpg', 'lilith_wb.jpg',
+  ],
+};
+
+const STATIC_IMAGE_MAP = {
   main: {
     images: ['/img/lilith/lilith_main.jpg']
   }
 };
+
+async function getGalleryImageList(category) {
+  const cat = GALLERY_CATEGORIES[category];
+  if (!cat) return [];
+  const saved = await dbRead(cat.supabaseKey);
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) { /* fallback */ }
+  }
+  return DEFAULT_IMAGES[category] || [];
+}
+
+async function saveGalleryImageList(category, list) {
+  const cat = GALLERY_CATEGORIES[category];
+  if (!cat) return;
+  await dbWrite(cat.supabaseKey, JSON.stringify(list));
+}
 
 async function renderImageGrid(tab) {
   const grid = document.getElementById('admin-img-grid');
@@ -257,24 +293,51 @@ async function renderImageGrid(tab) {
   const overrides = {};
   if (allSettings) allSettings.forEach(s => { overrides[s.key] = s.value; });
 
-  const data = IMAGE_MAP[tab];
-  const cards = data.images.map(src => {
-    const savedSrc = overrides[`img_${src}`] || src;
+  const isGalleryTab = !!GALLERY_CATEGORIES[tab];
+  let images;
+
+  if (isGalleryTab) {
+    const cat = GALLERY_CATEGORIES[tab];
+    const imageList = await getGalleryImageList(tab);
+    images = imageList.map(name => {
+      const isCustom = name.startsWith('custom_');
+      const src = isCustom ? name : `${cat.basePath}${name}`;
+      return { src, name, isCustom };
+    });
+  } else {
+    const data = STATIC_IMAGE_MAP[tab];
+    if (!data) { grid.innerHTML = ''; return; }
+    images = data.images.map(src => ({ src, name: src.split('/').pop(), isCustom: false }));
+  }
+
+  const cards = images.map(({ src, name, isCustom }) => {
+    const savedSrc = overrides[`img_${src}`] || (isCustom ? overrides[`img_${src}`] || '' : src);
+    const displaySrc = isCustom ? (overrides[`img_${name}`] || '') : savedSrc;
     const savedPos = overrides[`pos_${src}`] || 'center center';
     return `
-      <div class="admin-img-card" data-original="${src}">
-        <img src="${savedSrc}" style="object-position: ${savedPos};" />
+      <div class="admin-img-card" data-original="${src}" data-name="${name}" data-custom="${isCustom}">
+        <img src="${displaySrc || src}" style="object-position: ${savedPos};" />
         <div class="admin-img-actions">
-          <button class="admin-img-btn admin-img-replace" title="Thay ảnh">📷</button>
-          <button class="admin-img-btn admin-img-position" title="Chỉnh vị trí">✋</button>
+          <button class="admin-img-btn admin-img-replace" title="Thay ảnh"><i data-lucide="camera"></i></button>
+          <button class="admin-img-btn admin-img-position" title="Chỉnh vị trí"><i data-lucide="move"></i></button>
+          ${isCustom ? '<button class="admin-img-btn admin-img-delete" title="Xóa ảnh"><i data-lucide="trash-2"></i></button>' : ''}
         </div>
-        <div class="admin-img-name">${src.split('/').pop()}</div>
+        <div class="admin-img-name">${isCustom ? '<i data-lucide="sparkles"></i> ' + name.replace('custom_', '').slice(0,12) + '...' : name}</div>
       </div>
     `;
   }).join('');
 
-  grid.innerHTML = cards;
+  const addCard = isGalleryTab ? `
+    <div class="admin-img-card admin-img-add" id="admin-add-img">
+      <div class="admin-add-icon"><i data-lucide="plus"></i></div>
+      <div class="admin-img-name">Thêm ảnh</div>
+    </div>
+  ` : '';
 
+  grid.innerHTML = cards + addCard;
+  createIcons({ icons });
+
+  // Replace image handlers
   grid.querySelectorAll('.admin-img-replace').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -283,6 +346,7 @@ async function renderImageGrid(tab) {
     });
   });
 
+  // Position editor handlers
   grid.querySelectorAll('.admin-img-position').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -290,6 +354,76 @@ async function renderImageGrid(tab) {
       openPositionEditor(card.dataset.original);
     });
   });
+
+  // Delete handlers
+  grid.querySelectorAll('.admin-img-delete').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.admin-img-card');
+      const name = card.dataset.name;
+      if (!confirm('Xóa ảnh này?')) return;
+      await deleteGalleryImage(tab, name);
+      renderImageGrid(tab);
+      resetLogoutTimer();
+    });
+  });
+
+  // Add image handler
+  const addBtn = document.getElementById('admin-add-img');
+  if (addBtn) {
+    addBtn.addEventListener('click', () => {
+      addGalleryImage(tab);
+    });
+  }
+}
+
+// ==================== ADD / DELETE GALLERY IMAGE ====================
+function addGalleryImage(category) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(input);
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    document.body.removeChild(input);
+    if (!file) return;
+
+    const addBtn = document.getElementById('admin-add-img');
+    if (addBtn) addBtn.querySelector('.admin-img-name').textContent = 'Đang xử lý...';
+
+    try {
+      const customName = `custom_${Date.now()}`;
+      const dataUrl = await resizeImageToBase64(file);
+      await dbWrite(`img_${customName}`, dataUrl);
+
+      const imageList = await getGalleryImageList(category);
+      imageList.push(customName);
+      await saveGalleryImageList(category, imageList);
+
+      renderImageGrid(category);
+      resetLogoutTimer();
+    } catch (err) {
+      console.error('Add image error:', err);
+      if (addBtn) addBtn.querySelector('.admin-img-name').textContent = 'Lỗi!';
+    }
+  };
+
+  setTimeout(() => input.click(), 50);
+}
+
+async function deleteGalleryImage(category, name) {
+  try {
+    // Remove base64 data
+    await dbWrite(`img_${name}`, '');
+    // Remove from list
+    const imageList = await getGalleryImageList(category);
+    const newList = imageList.filter(n => n !== name);
+    await saveGalleryImageList(category, newList);
+  } catch (err) {
+    console.error('Delete image error:', err);
+  }
 }
 
 // ==================== REPLACE IMAGE ====================
