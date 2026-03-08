@@ -10,7 +10,7 @@ export function renderHome() {
           data-lightbox="/img/lilith/lilith_main.jpg"
         />
       </div>
-      <h1 class="hero-title">Lilith</h1>
+      <h1 class="hero-title">Lilith Ylliz</h1>
       <p class="hero-subtitle"><img src="/img/concept/logo.png" alt="" class="subtitle-logo" /> Anime & Chibi Artist <img src="/img/concept/logo.png" alt="" class="subtitle-logo" /></p>
       <div class="hero-cta">
         <a href="#gallery" class="btn btn-primary" data-page="gallery" onclick="event.preventDefault(); window.location.hash='gallery';">

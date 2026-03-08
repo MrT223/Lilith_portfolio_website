@@ -266,7 +266,7 @@ export function renderPrice() {
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="landmark"></i></span>
-                <span>Phương thức thanh toán: <strong>Bank / Momo / Card GAME</strong> (card game sẽ lấy thêm phí chiết xuất).</span>
+                <span>Phương thức thanh toán: <strong>Bank / Momo</strong> (Vui lòng chụp bill lại sau khi thanh toán).</span>
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="clock"></i></span>

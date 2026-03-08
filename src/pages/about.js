@@ -17,7 +17,7 @@ export function renderAbout() {
         <h1 class="page-title">
           <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> About Me
         </h1>
-        <p class="page-desc">Xin chào, tớ là Lilith!</p>
+        <p class="page-desc">Xin chào, tớ là Lilith Ylliz!</p>
       </div>
 
       <div class="about-intro reveal">
@@ -30,7 +30,7 @@ export function renderAbout() {
           />
         </div>
         <div class="about-text">
-          <h2>Lilith <i data-lucide="sparkles"></i></h2>
+          <h2>Lilith Ylliz <i data-lucide="sparkles"></i></h2>
 
           <div class="about-info-grid">
             <div class="about-info-item">
@@ -72,7 +72,7 @@ export function renderAbout() {
 
       <!-- Backstory -->
       <div class="about-section">
-        <h2 class="about-section-title reveal"><i data-lucide="book-open"></i> Câu chuyện của Lilith</h2>
+        <h2 class="about-section-title reveal"><i data-lucide="book-open"></i> Câu chuyện của Lilith Ylliz</h2>
         <div class="backstory-container reveal">
           <div class="backstory-chapter">
             <div class="chapter-marker">
@@ -82,7 +82,7 @@ export function renderAbout() {
             <div class="chapter-content">
               <h3>Khu rừng phía Nam</h3>
               <p>
-                Lilith được sinh ra trong một khu rừng phía Nam lục địa — một nơi nhìn từ ngoài vào chẳng có gì đặc biệt, 
+                Lilith Ylliz được sinh ra trong một khu rừng phía Nam lục địa — một nơi nhìn từ ngoài vào chẳng có gì đặc biệt, 
                 nhưng đó vừa là nhà, vừa là một phần đẹp đẽ từng sống động trước mắt nàng. 
                 Mọi người trong rừng đều cảnh báo nàng về sự nguy hiểm phía bên ngoài khu rừng, 
                 nhưng với tính hiếu kỳ bẩm sinh, một đêm nọ nàng quyết định lén rời khỏi rừng 
@@ -100,7 +100,7 @@ export function renderAbout() {
               <p>
                 Đến khi trở lại nơi nàng từng gọi là nhà, giờ đang nằm gọn trong biển lửa rực đỏ. 
                 Ngọn lửa lấy đi hầu như là tất cả của nàng, nhưng vẫn không thể trở thành ngọn lửa oán hận 
-                mà cướp đi bản tính tốt bụng của Lilith.
+                mà cướp đi bản tính tốt bụng của Lilith Ylliz.
               </p>
             </div>
           </div>
@@ -140,7 +140,7 @@ export function renderAbout() {
 
       <!-- Lilith Gallery -->
       <div class="about-section">
-        <h2 class="about-section-title reveal"><img src="/img/concept/logo.png" alt="" class="section-logo" /> Lilith Gallery</h2>
+        <h2 class="about-section-title reveal"><img src="/img/concept/logo.png" alt="" class="section-logo" /> Lilith Ylliz Gallery</h2>
         <div class="lilith-gallery">
           ${lilithImages.map((img, i) => `
             <div class="lilith-card stagger-${Math.min(i + 1, 7)}">
@@ -160,7 +160,7 @@ export function renderAbout() {
       <div class="about-section">
         <h2 class="about-section-title reveal"><i data-lucide="drama"></i> Alternative Art Styles</h2>
         <p class="page-desc reveal" style="text-align: center; margin-bottom: 2rem;">
-          Lilith được vẽ lại theo phong cách của các tác phẩm nổi tiếng
+          Lilith Ylliz được vẽ lại theo phong cách của các tác phẩm nổi tiếng
         </p>
         <div class="alt-art-grid">
           ${altArt.map((art, i) => `
