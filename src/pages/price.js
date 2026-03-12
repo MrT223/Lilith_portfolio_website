@@ -290,7 +290,7 @@ export function renderPrice() {
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="building"></i></span>
-                <span>Phí thương mại: <strong>×3</strong> | Private: <strong>×2</strong>.</span>
+                <span>Phí thương mại: <strong>×3</strong> | Private: <strong>×1.5</strong>.</span>
               </div>
             </div>
           </div>
