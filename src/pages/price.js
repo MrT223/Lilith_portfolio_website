@@ -258,7 +258,7 @@ export function renderPrice() {
             <div class="tos-body-inner">
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="credit-card"></i></span>
-                <span>CỌC <strong>30%</strong> sau khi chốt slot, <strong>THANH TOÁN full</strong> tiền comm sau khi nhận được sketch.</span>
+                <span>CỌC <strong>30%</strong> sau khi chốt slot - wl, <strong>THANH TOÁN full</strong> tiền comm sau khi nhận được sketch.</span>
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="users"></i></span>
