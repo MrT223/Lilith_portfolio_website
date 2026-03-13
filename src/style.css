@@ -816,6 +816,313 @@ body {
   font-style: italic;
 }
 
+/* Gallery Loading Skeleton */
+.gallery-skeleton {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  min-height: 320px;
+}
+
+.skeleton-shimmer {
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 228, 237, 0.2) 0%,
+    rgba(255, 183, 197, 0.15) 40%,
+    rgba(255, 228, 237, 0.3) 60%,
+    rgba(255, 183, 197, 0.15) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-wave {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Anime Section Wrapper */
+.anime-section-wrapper {
+  width: 100%;
+}
+
+/* Anime Sub-Tabs — Premium Design */
+.anime-sub-tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.anime-sub-tabs-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--pink-400);
+  font-family: var(--font-display);
+}
+
+.anime-sub-tabs-icon {
+  display: inline-block;
+  animation: sparkle-rotate 3s ease-in-out infinite;
+}
+
+@keyframes sparkle-rotate {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(15deg) scale(1.15); }
+  50% { transform: rotate(0deg) scale(1); }
+  75% { transform: rotate(-15deg) scale(1.15); }
+}
+
+.anime-sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 183, 197, 0.25);
+  border-radius: 50px;
+  box-shadow: 0 2px 16px rgba(255, 183, 197, 0.1);
+}
+
+.anime-sub-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.48rem 1.3rem;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.88rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.anime-sub-tab-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--pink-300);
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  flex-shrink: 0;
+}
+
+.anime-sub-tab.active .anime-sub-tab-dot {
+  opacity: 1;
+  transform: scale(1);
+  background: white;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+}
+
+.anime-sub-tab.active {
+  background: linear-gradient(135deg, var(--pink-400), #e879a0);
+  color: var(--white);
+  box-shadow:
+    0 4px 16px rgba(255, 145, 164, 0.4),
+    0 1px 3px rgba(255, 145, 164, 0.2);
+  transform: translateY(-1px);
+}
+
+.anime-sub-tab.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 200%;
+  height: 100%;
+  border-radius: 50px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.15),
+    transparent
+  );
+  animation: tab-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes tab-shimmer {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(50%); }
+}
+
+.anime-sub-tab:hover:not(.active) {
+  background: rgba(255, 228, 237, 0.6);
+  color: var(--pink-500);
+  transform: translateY(-1px);
+}
+
+.anime-sub-tab:hover:not(.active) .anime-sub-tab-dot {
+  opacity: 0.6;
+  transform: scale(0.8);
+}
+
+.anime-sub-tab:active:not(.active) {
+  transform: translateY(0) scale(0.97);
+}
+
+/* Admin Anime Sub-Category Manager */
+.admin-anime-manager {
+  background: linear-gradient(135deg, rgba(255, 240, 245, 0.5), rgba(255, 228, 237, 0.3));
+  border: 1px solid rgba(255, 183, 197, 0.3);
+  border-radius: var(--radius-md);
+  padding: 1.2rem;
+  margin-bottom: 0.8rem;
+  backdrop-filter: blur(8px);
+}
+
+.admin-anime-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.admin-anime-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.admin-subcat-count {
+  background: rgba(255, 145, 164, 0.15);
+  color: var(--pink-500);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.admin-add-subcat-btn {
+  padding: 0.45rem 1.1rem !important;
+  font-size: 0.85rem !important;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.admin-subcat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+}
+
+.admin-subcat-empty {
+  text-align: center;
+  padding: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-subcat-empty p {
+  margin: 0.2rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-subcat-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.9rem;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 183, 197, 0.2);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.admin-subcat-item:hover {
+  background: rgba(255, 240, 245, 0.9);
+  border-color: var(--pink-300);
+  transform: translateX(2px);
+}
+
+.admin-subcat-info {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.admin-subcat-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, var(--pink-300), var(--pink-200));
+  color: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.admin-subcat-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.92rem;
+}
+
+.admin-subcat-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.admin-anime-subtabs-section {
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(255, 183, 197, 0.15);
+}
+
+.admin-anime-subtabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.admin-anime-sub-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Spin animation for loading */
+@keyframes spin-icon {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin-icon {
+  animation: spin-icon 1s linear infinite;
+  display: inline-block;
+}
+
 /* ==================== PRICE PAGE ==================== */
 .price-page {
   padding: 2rem;
@@ -1824,6 +2131,37 @@ body {
   .gallery-tab {
     padding: 0.5rem 1.2rem;
     font-size: 0.85rem;
+  }
+
+  .anime-sub-tabs-wrapper {
+    gap: 0.4rem;
+    margin-bottom: 1.2rem;
+    padding: 0 0.5rem;
+  }
+
+  .anime-sub-tabs-label {
+    font-size: 0.7rem;
+  }
+
+  .anime-sub-tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    padding: 0.4rem 0.6rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    border-radius: 50px;
+  }
+
+  .anime-sub-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .anime-sub-tab {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    flex-shrink: 0;
   }
 
   .price-card {

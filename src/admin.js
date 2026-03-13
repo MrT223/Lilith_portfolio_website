@@ -24,11 +24,15 @@ async function dbRead(key) {
 }
 
 async function dbWrite(key, value) {
-  const { data } = await supabase.rpc('admin_write', {
+  const { data, error } = await supabase.rpc('admin_write', {
     pw_hash: adminPasswordHash,
     setting_key: key,
     setting_value: value
   });
+  if (error) {
+    console.error(`[dbWrite] error writing key "${key}":`, error);
+    alert(`Lỗi lưu dữ liệu: ${error.message || 'Không xác định'}`);
+  }
   return data;
 }
 
@@ -239,26 +243,12 @@ const GALLERY_CATEGORIES = {
 };
 
 const DEFAULT_IMAGES = {
-  'gallery-normal': [
-    'normal01.jpg', 'normal02.jpg', 'normal03.jpg',
-    'normal04.jpg', 'normal05.jpg', 'normal06.jpg',
-    'normal07.jpg', 'normal08.jpg', 'normal09.jpg',
-  ],
+  'gallery-normal': [],
   'gallery-chibi': [],
-  'gallery-chibi-ych': [
-    'chibi01.jpg', 'chibi02.jpg', 'chibi03.jpg',
-    'chibi04.jpg', 'chibi05.jpg', 'chibi06.jpg',
-    'chibi07.jpg', 'chibi08.jpg', 'chibi09.jpg',
-  ],
+  'gallery-chibi-ych': [],
   'gallery-anime': [],
-  'lilith': [
-    'lilith01.jpg', 'lilith02.jpg', 'lilith03.jpg', 'lilith04.jpg',
-    'lilith05.jpg', 'lilith06.jpg', 'lilith07.jpg', 'lilith08.jpg',
-  ],
-  'alt': [
-    'lilith_gachiakuta.jpg', 'lilith_kny.jpg',
-    'lilith_mha.jpg', 'lilith_wb.jpg',
-  ],
+  'lilith': [],
+  'alt': [],
 };
 
 const STATIC_IMAGE_MAP = {
@@ -286,6 +276,13 @@ async function saveGalleryImageList(category, list) {
 async function renderImageGrid(tab) {
   const grid = document.getElementById('admin-img-grid');
   if (!grid) return;
+
+  // Special handling for anime tab — show subcategory manager
+  if (tab === 'gallery-anime') {
+    await renderAnimeSubcategoryManager(grid);
+    return;
+  }
+
   grid.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1">Đang tải...</p>';
 
   const { data: allSettings } = await supabase
@@ -378,6 +375,358 @@ async function renderImageGrid(tab) {
       addGalleryImage(tab);
     });
   }
+}
+
+// ==================== ANIME SUBCATEGORY MANAGER ====================
+async function loadAnimeSubcategories() {
+  try {
+    const saved = await dbRead('anime_subcategories');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch(e) {
+    console.error('[loadAnimeSubcategories] parse error:', e);
+  }
+  return [];
+}
+
+async function saveAnimeSubcategories(list) {
+  const result = await dbWrite('anime_subcategories', JSON.stringify(list));
+  console.log('[saveAnimeSubcategories] result:', result, 'list:', list);
+  return result;
+}
+
+async function renderAnimeSubcategoryManager(grid) {
+  grid.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1"><i data-lucide="loader" class="spin-icon"></i> Đang tải...</p>';
+  createIcons({ icons });
+
+  let subcategories;
+  try {
+    subcategories = await loadAnimeSubcategories();
+  } catch (err) {
+    console.error('[renderAnimeSubcategoryManager] load error:', err);
+    grid.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1;color:red">Lỗi tải dữ liệu!</p>';
+    return;
+  }
+
+  const emptyMsg = subcategories.length === 0
+    ? `<div class="admin-subcat-empty">
+        <i data-lucide="folder-plus" style="width:32px;height:32px;color:var(--pink-300);margin-bottom:0.5rem"></i>
+        <p>Chưa có mục nào</p>
+        <p style="font-size:0.8rem;color:var(--text-light)">Bấm nút <strong>+ Thêm mục</strong> để bắt đầu</p>
+      </div>`
+    : '';
+
+  const subcatCards = subcategories.map((sub, i) => `
+    <div class="admin-subcat-item" data-sub-id="${sub.id}">
+      <div class="admin-subcat-info">
+        <span class="admin-subcat-number">${i + 1}</span>
+        <span class="admin-subcat-name">${sub.name}</span>
+      </div>
+      <div class="admin-subcat-actions">
+        <button class="admin-img-btn admin-subcat-rename" title="Sửa tên"><i data-lucide="pencil"></i></button>
+        <button class="admin-img-btn admin-subcat-delete" title="Xóa mục"><i data-lucide="trash-2"></i></button>
+      </div>
+    </div>
+  `).join('');
+
+  const subtabs = subcategories.length > 0 ? `
+    <div class="admin-anime-subtabs-section">
+      <p class="admin-hint" style="margin:0 0 0.5rem 0;font-size:0.82rem">Chọn mục để quản lý ảnh:</p>
+      <div class="admin-anime-subtabs">
+        ${subcategories.map((sub, i) => `
+          <button class="admin-tab admin-anime-sub-tab ${i === 0 ? 'active' : ''}" data-subtab="${sub.id}">
+            <i data-lucide="image" style="width:12px;height:12px"></i> ${sub.name}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+  ` : '';
+
+  const html = `
+    <div class="admin-anime-manager" style="grid-column:1/-1">
+      <div class="admin-anime-header">
+        <div class="admin-anime-title-row">
+          <i data-lucide="layers" style="width:18px;height:18px;color:var(--pink-400)"></i>
+          <h4 style="margin:0;color:var(--pink-600);font-family:var(--font-display)">Quản lý mục Anime Style</h4>
+          <span class="admin-subcat-count">${subcategories.length} mục</span>
+        </div>
+        <button class="admin-btn admin-btn-primary admin-add-subcat-btn" id="admin-add-subcat">
+          <i data-lucide="plus" style="width:14px;height:14px"></i> Thêm mục
+        </button>
+      </div>
+
+      ${emptyMsg}
+
+      <div class="admin-subcat-list">
+        ${subcatCards}
+      </div>
+
+      ${subtabs}
+    </div>
+  `;
+
+  grid.innerHTML = html;
+
+  // Image grid below subcategory manager
+  if (subcategories.length > 0) {
+    const imgGridWrap = document.createElement('div');
+    imgGridWrap.id = 'admin-anime-sub-img-grid';
+    imgGridWrap.style.cssText = 'grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.8rem;margin-top:0.5rem';
+    grid.appendChild(imgGridWrap);
+
+    try {
+      const firstSub = subcategories[0];
+      await renderAnimeSubImages(firstSub.id, imgGridWrap);
+    } catch (err) {
+      console.error('[renderAnimeSubcategoryManager] renderAnimeSubImages error:', err);
+      imgGridWrap.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1;color:red">Lỗi tải ảnh</p>';
+    }
+  }
+
+  createIcons({ icons });
+
+  // === Add subcategory ===
+  const addBtn = document.getElementById('admin-add-subcat');
+  if (addBtn) {
+    addBtn.addEventListener('click', async () => {
+      const name = prompt('Nhập tên mục mới (ví dụ: Original, Fanart...):');
+      if (!name || !name.trim()) return;
+
+      // Show loading
+      addBtn.disabled = true;
+      addBtn.innerHTML = '<i data-lucide="loader" class="spin-icon" style="width:14px;height:14px"></i> Đang lưu...';
+      createIcons({ icons });
+
+      try {
+        const subId = `sub_${Date.now()}`;
+        subcategories.push({ id: subId, name: name.trim() });
+        await saveAnimeSubcategories(subcategories);
+        await renderAnimeSubcategoryManager(grid);
+      } catch (err) {
+        console.error('[addSubcategory] error:', err);
+        alert('Lỗi khi thêm mục: ' + (err.message || 'Không xác định'));
+        addBtn.disabled = false;
+        addBtn.innerHTML = '<i data-lucide="plus" style="width:14px;height:14px"></i> Thêm mục';
+        createIcons({ icons });
+      }
+      resetLogoutTimer();
+    });
+  }
+
+  // === Rename subcategory ===
+  grid.querySelectorAll('.admin-subcat-rename').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const item = btn.closest('.admin-subcat-item');
+      const subId = item.dataset.subId;
+      const sub = subcategories.find(s => s.id === subId);
+      if (!sub) return;
+      const newName = prompt('Nhập tên mới:', sub.name);
+      if (!newName || !newName.trim() || newName.trim() === sub.name) return;
+
+      try {
+        sub.name = newName.trim();
+        await saveAnimeSubcategories(subcategories);
+        await renderAnimeSubcategoryManager(grid);
+      } catch (err) {
+        console.error('[renameSubcategory] error:', err);
+        alert('Lỗi khi đổi tên: ' + (err.message || 'Không xác định'));
+      }
+      resetLogoutTimer();
+    });
+  });
+
+  // === Delete subcategory ===
+  grid.querySelectorAll('.admin-subcat-delete').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const item = btn.closest('.admin-subcat-item');
+      const subId = item.dataset.subId;
+      const sub = subcategories.find(s => s.id === subId);
+      if (!sub) return;
+      if (!confirm(`Xóa mục "${sub.name}" và tất cả ảnh trong mục này?`)) return;
+
+      try {
+        // Delete images for this subcategory
+        await dbWrite(`gallery_images_anime_${subId}`, '[]');
+        const idx = subcategories.indexOf(sub);
+        if (idx > -1) subcategories.splice(idx, 1);
+        await saveAnimeSubcategories(subcategories);
+        await renderAnimeSubcategoryManager(grid);
+      } catch (err) {
+        console.error('[deleteSubcategory] error:', err);
+        alert('Lỗi khi xóa: ' + (err.message || 'Không xác định'));
+      }
+      resetLogoutTimer();
+    });
+  });
+
+  // === Sub-tab switching ===
+  grid.querySelectorAll('.admin-anime-sub-tab').forEach(tab => {
+    tab.addEventListener('click', async () => {
+      grid.querySelectorAll('.admin-anime-sub-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const subId = tab.dataset.subtab;
+      const imgGridWrap = document.getElementById('admin-anime-sub-img-grid');
+      if (imgGridWrap) {
+        try {
+          await renderAnimeSubImages(subId, imgGridWrap);
+        } catch (err) {
+          console.error('[subtab switch] error:', err);
+          imgGridWrap.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1;color:red">Lỗi tải ảnh</p>';
+        }
+      }
+      resetLogoutTimer();
+    });
+  });
+}
+
+async function renderAnimeSubImages(subId, container) {
+  container.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1"><i data-lucide="loader" class="spin-icon"></i> Đang tải ảnh...</p>';
+  createIcons({ icons });
+
+  // Dynamic category key
+  const catKey = `anime-sub-${subId}`;
+  // Register dynamic category
+  GALLERY_CATEGORIES[catKey] = {
+    folder: 'AnimeStyle',
+    supabaseKey: `gallery_images_anime_${subId}`,
+    basePath: '/img/Sample/AnimeStyle/'
+  };
+  if (!DEFAULT_IMAGES[catKey]) DEFAULT_IMAGES[catKey] = [];
+
+  const { data: allSettings } = await supabase
+    .from('admin_settings')
+    .select('key, value')
+    .or('key.like.img_%,key.like.pos_%');
+
+  const overrides = {};
+  if (allSettings) allSettings.forEach(s => { overrides[s.key] = s.value; });
+
+  const imageList = await getGalleryImageList(catKey);
+  const cat = GALLERY_CATEGORIES[catKey];
+
+  const images = imageList.map(name => {
+    const isCustom = name.startsWith('custom_');
+    const src = isCustom ? name : `${cat.basePath}${name}`;
+    return { src, name, isCustom };
+  });
+
+  const cards = images.map(({ src, name, isCustom }) => {
+    const savedSrc = overrides[`img_${src}`] || (isCustom ? overrides[`img_${src}`] || '' : src);
+    const displaySrc = isCustom ? (overrides[`img_${name}`] || '') : savedSrc;
+    const savedPos = overrides[`pos_${src}`] || 'center center';
+    return `
+      <div class="admin-img-card" data-original="${src}" data-name="${name}" data-custom="${isCustom}">
+        <img src="${displaySrc || src}" style="object-position: ${savedPos};" />
+        <div class="admin-img-actions">
+          <button class="admin-img-btn admin-img-replace" title="Thay ảnh"><i data-lucide="camera"></i></button>
+          <button class="admin-img-btn admin-img-position" title="Chỉnh vị trí"><i data-lucide="move"></i></button>
+          ${isCustom ? '<button class="admin-img-btn admin-img-delete" title="Xóa ảnh"><i data-lucide="trash-2"></i></button>' : ''}
+        </div>
+        <div class="admin-img-name">${isCustom ? '<i data-lucide="sparkles"></i> ' + name.replace('custom_', '').slice(0,12) + '...' : name}</div>
+      </div>
+    `;
+  }).join('');
+
+  const addCard = `
+    <div class="admin-img-card admin-img-add" id="admin-add-anime-sub-img">
+      <div class="admin-add-icon"><i data-lucide="plus"></i></div>
+      <div class="admin-img-name">Thêm ảnh</div>
+    </div>
+  `;
+
+  if (images.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:1.5rem 0">
+        <i data-lucide="image-plus" style="width:28px;height:28px;color:var(--pink-300);margin-bottom:0.3rem"></i>
+        <p class="admin-hint" style="margin:0.3rem 0 0">Chưa có ảnh nào trong mục này</p>
+      </div>
+    ` + addCard;
+  } else {
+    container.innerHTML = cards + addCard;
+  }
+  createIcons({ icons });
+
+  // Replace image handlers
+  container.querySelectorAll('.admin-img-replace').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.admin-img-card');
+      replaceImage(card.dataset.original, card);
+    });
+  });
+
+  // Position editor handlers
+  container.querySelectorAll('.admin-img-position').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.admin-img-card');
+      openPositionEditor(card.dataset.original);
+    });
+  });
+
+  // Delete handlers
+  container.querySelectorAll('.admin-img-delete').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const card = btn.closest('.admin-img-card');
+      const name = card.dataset.name;
+      if (!confirm('Xóa ảnh này?')) return;
+      try {
+        await deleteGalleryImage(catKey, name);
+        await renderAnimeSubImages(subId, container);
+      } catch (err) {
+        console.error('[deleteAnimeSubImage] error:', err);
+      }
+      resetLogoutTimer();
+    });
+  });
+
+  // Add image handler
+  const addImgBtn = document.getElementById('admin-add-anime-sub-img');
+  if (addImgBtn) {
+    addImgBtn.addEventListener('click', () => {
+      addGalleryImageToContainer(catKey, subId, container);
+    });
+  }
+}
+
+function addGalleryImageToContainer(category, subId, container) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(input);
+
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    document.body.removeChild(input);
+    if (!file) return;
+
+    const addBtn = document.getElementById('admin-add-anime-sub-img');
+    if (addBtn) addBtn.querySelector('.admin-img-name').textContent = 'Đang xử lý...';
+
+    try {
+      const customName = `custom_${Date.now()}`;
+      const dataUrl = await resizeImageToBase64(file);
+      await dbWrite(`img_${customName}`, dataUrl);
+
+      const imageList = await getGalleryImageList(category);
+      imageList.push(customName);
+      await saveGalleryImageList(category, imageList);
+
+      await renderAnimeSubImages(subId, container);
+      resetLogoutTimer();
+    } catch (err) {
+      console.error('[addGalleryImageToContainer] error:', err);
+      if (addBtn) addBtn.querySelector('.admin-img-name').textContent = 'Lỗi!';
+    }
+  };
+
+  setTimeout(() => input.click(), 50);
 }
 
 // ==================== ADD / DELETE GALLERY IMAGE ====================

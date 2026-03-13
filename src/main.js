@@ -1,6 +1,6 @@
 import { createIcons, icons } from 'lucide';
 import { renderHome } from './pages/home.js';
-import { renderGallery } from './pages/gallery.js';
+import { renderGallery, initAnimeSubTabs } from './pages/gallery.js';
 import { renderPrice } from './pages/price.js';
 import { renderAbout } from './pages/about.js';
 import { initAdminSecret, loadAdminSettings, applyImageOverrides } from './admin.js';
@@ -176,6 +176,9 @@ function initPageEffects() {
     });
   }
 
+  // Init anime sub-tabs
+  initAnimeSubTabs();
+
   // TOS accordion
   document.querySelectorAll('.tos-header').forEach(header => {
     header.addEventListener('click', () => {
@@ -199,10 +202,16 @@ function showGalleryCategory(category) {
   const grids = document.querySelectorAll('.gallery-grid-section');
   grids.forEach(grid => {
     if (grid.dataset.category === category) {
-      grid.style.display = 'grid';
-      // Re-trigger animation
-      const items = grid.querySelectorAll('.gallery-item');
-      items.forEach((item, i) => {
+      // For anime section wrapper, show as flex/block
+      if (grid.classList.contains('anime-section-wrapper')) {
+        grid.style.display = '';
+      } else {
+        grid.style.display = 'grid';
+      }
+      // Re-trigger animation for visible items
+      const activeSubGrid = grid.querySelector('.anime-sub-grid:not([style*="display:none"]):not([style*="display: none"])');
+      const targetGrid = activeSubGrid || grid;
+      targetGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
         item.classList.remove('visible');
         setTimeout(() => item.classList.add('visible'), i * 80);
       });
