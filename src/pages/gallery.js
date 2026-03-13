@@ -212,47 +212,121 @@ export function renderGallery() {
   return buildLoadingSkeleton();
 }
 
+// ===== IDB CACHE WRAPPER =====
+const IDB_NAME = 'LilithGalleryDB';
+const IDB_VERSION = 1;
+const STORE_NAME = 'gallery_cache';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME);
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGet(key) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readonly');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.get(key);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) { return null; }
+}
+
+async function idbSet(key, val) {
+  try {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      const req = store.put(val, key);
+      req.onsuccess = () => resolve();
+      req.onerror = () => reject(req.error);
+    });
+  } catch (e) {}
+}
+
 async function loadSupabaseData() {
   try {
-    const [normalData, chibiData, chibiYchData, animeData, overridesData, subcatData] = await Promise.all([
-      supabase.from('admin_settings').select('value').eq('key', SUPABASE_KEYS.normal).maybeSingle(),
-      supabase.from('admin_settings').select('value').eq('key', SUPABASE_KEYS.chibi).maybeSingle(),
-      supabase.from('admin_settings').select('value').eq('key', SUPABASE_KEYS.chibiych).maybeSingle(),
-      supabase.from('admin_settings').select('value').eq('key', SUPABASE_KEYS.anime).maybeSingle(),
-      supabase.from('admin_settings').select('key, value').or('key.like.img_%,key.like.pos_%'),
-      supabase.from('admin_settings').select('value').eq('key', 'anime_subcategories').maybeSingle(),
-    ]);
+    // 1. Lấy version hiện tại từ Supabase (rất nhẹ, <50ms)
+    const { data: versionData } = await supabase
+      .from('admin_settings')
+      .select('value')
+      .eq('key', 'gallery_version')
+      .maybeSingle();
+    
+    const serverVersion = versionData?.value || '0';
+    const localVersion = await idbGet('gallery_version');
+    
+    let allData = null;
 
-    const normal = normalData.data?.value ? JSON.parse(normalData.data.value) : [];
-    const chibi = chibiData.data?.value ? JSON.parse(chibiData.data.value) : [];
-    const chibiych = chibiYchData.data?.value ? JSON.parse(chibiYchData.data.value) : [];
-    const anime = animeData.data?.value ? JSON.parse(animeData.data.value) : [];
+    // 2. Kiểm tra Cache
+    if (serverVersion === localVersion) {
+      // Version khớp -> Load siêu tốc từ IndexedDB Local (~10ms)
+      console.log('[gallery] Version match. Loading from Local IndexedDB Cache...');
+      allData = await idbGet('gallery_data');
+    }
 
-    const overrides = {};
-    if (overridesData.data) overridesData.data.forEach(s => { overrides[s.key] = s.value; });
+    // 3. Nếu chưa có cache hoặc version khác, fetch toàn bộ từ DB
+    if (!allData) {
+      console.log('[gallery] Fetching full 20MB+ payload from Supabase...');
+      const keysToFetch = [
+        SUPABASE_KEYS.normal,
+        SUPABASE_KEYS.chibi,
+        SUPABASE_KEYS.chibiych,
+        SUPABASE_KEYS.anime,
+        'anime_subcategories'
+      ].join(',');
 
-    // Load anime subcategories
+      const { data: dbData, error } = await supabase
+        .from('admin_settings')
+        .select('key, value')
+        .or(`key.in.(${keysToFetch}),key.like.img_%,key.like.pos_%,key.like.gallery_images_anime_%`);
+
+      if (error) throw error;
+      allData = dbData;
+
+      // Lưu Cache
+      await idbSet('gallery_data', allData);
+      await idbSet('gallery_version', serverVersion);
+    }
+
+    let normal = [], chibi = [], chibiych = [], anime = [];
+    let overrides = {};
     let animeSubcategories = [];
     let animeSubImages = {};
-    if (subcatData.data?.value) {
-      try { animeSubcategories = JSON.parse(subcatData.data.value); } catch(e) { /* ignore */ }
-    }
 
-    // Load images for each subcategory
-    if (animeSubcategories.length > 0) {
-      const subImagePromises = animeSubcategories.map(sub =>
-        supabase.from('admin_settings').select('value').eq('key', `gallery_images_anime_${sub.id}`).maybeSingle()
-      );
-      const subImageResults = await Promise.all(subImagePromises);
-      subImageResults.forEach((result, i) => {
-        const subId = animeSubcategories[i].id;
-        if (result.data?.value) {
-          try { animeSubImages[subId] = JSON.parse(result.data.value); } catch(e) { animeSubImages[subId] = []; }
-        } else {
-          animeSubImages[subId] = [];
+    // Phân loại dữ liệu 1 lần duyệt (O(N))
+    allData.forEach((row) => {
+      const { key, value } = row;
+      try {
+        if (key === SUPABASE_KEYS.normal) normal = JSON.parse(value) || [];
+        else if (key === SUPABASE_KEYS.chibi) chibi = JSON.parse(value) || [];
+        else if (key === SUPABASE_KEYS.chibiych) chibiych = JSON.parse(value) || [];
+        else if (key === SUPABASE_KEYS.anime) anime = JSON.parse(value) || [];
+        else if (key === 'anime_subcategories') animeSubcategories = JSON.parse(value) || [];
+        else if (key.startsWith('gallery_images_anime_sub_')) {
+          const subId = key.replace('gallery_images_anime_', '');
+          animeSubImages[subId] = JSON.parse(value) || [];
         }
-      });
-    }
+        else if (key.startsWith('img_') || key.startsWith('pos_')) {
+          overrides[key] = value;
+        }
+      } catch (e) {
+        // Bỏ qua lỗi parse JSON cục bộ
+      }
+    });
 
     cachedImages = { normal, chibi, chibiych, anime };
     cachedOverrides = overrides;
@@ -314,7 +388,7 @@ async function loadSupabaseData() {
     }
   } catch (e) {
     console.error('[gallery] loadSupabaseData error:', e);
-    // Hiện thông báo lỗi thay vì ảnh cũ
+    // Hiện thông báo lỗi thay vì skeleton trống trơn
     const gridEl = document.querySelector('.gallery-grid-section[data-category="normal"]');
     if (gridEl) {
       gridEl.innerHTML = '<p class="gallery-empty">Không thể tải ảnh. Vui lòng thử lại sau.</p>';

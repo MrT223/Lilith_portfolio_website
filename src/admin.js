@@ -15,6 +15,11 @@ async function sha256(str) {
 
 // ==================== SUPABASE HELPERS ====================
 async function dbRead(key) {
+  // Nếu admin panel đang mở và có cache, đọc cực nhanh từ RAM
+  if (adminMode && adminCache[key] !== undefined) {
+    return adminCache[key];
+  }
+
   const { data } = await supabase
     .from('admin_settings')
     .select('value')
@@ -32,12 +37,27 @@ async function dbWrite(key, value) {
   if (error) {
     console.error(`[dbWrite] error writing key "${key}":`, error);
     alert(`Lỗi lưu dữ liệu: ${error.message || 'Không xác định'}`);
+  } else {
+    // Cập nhật RAM cache ngay lập tức để admin panel không bao giờ cần load lại trang
+    if (adminMode) {
+      adminCache[key] = value;
+    }
   }
+
+  // Nếu là dữ liệu gallery, cập nhật version để xóa cache client
+  if (!error && (key.includes('gallery_') || key.includes('img_') || key.includes('pos_') || key === 'anime_subcategories')) {
+    supabase.rpc('admin_write', {
+      pw_hash: adminPasswordHash,
+      setting_key: 'gallery_version',
+      setting_value: Date.now().toString()
+    }).then(() => { /* silent update */ });
+  }
+
   return data;
 }
 
-function resizeImageToBase64(file) {
-  return new Promise((resolve) => {
+async function processAndUploadImageToStorage(file, fileName) {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (ev) => {
       const img = new Image();
@@ -49,10 +69,36 @@ function resizeImageToBase64(file) {
         canvas.width = w;
         canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        resolve(canvas.toDataURL('image/jpeg', 0.7));
+        
+        // Chuyển sang file Binary siêu nhẹ thay vì DataURL Base64 khổng lồ
+        canvas.toBlob(async (blob) => {
+          if (!blob) return reject(new Error('Canvas toBlob failed'));
+          
+          const { data, error } = await supabase.storage
+            .from('gallery')
+            .upload(fileName, blob, { upsert: true, contentType: file.type || 'image/jpeg' });
+            
+          if (error) {
+            console.error('[upload] Supabase Storage error:', error);
+            console.warn('[upload] Kích hoạt Fallback: Trả về chuỗi Base64 dài vì Storage Bucket lỗi (Chưa tạo hoặc RLS chặn).');
+            alert('Lỗi Upload lên Supabase: ' + (error.message || JSON.stringify(error)) + '\n\nWeb sẽ tạm thời tự động hạ cấp xuống lưu file Base64 cũ để không bị lỗi.');
+            // Nếu lỗi bucket (vd: user chưa tạo), dùng lại code cũ (base64 string) để web không bị crash
+            resolve(canvas.toDataURL('image/jpeg', 0.7));
+            return;
+          }
+          
+          // Lấy URL Public cực ngắn để lưu vào DB
+          const { data: publicData } = supabase.storage
+            .from('gallery')
+            .getPublicUrl(fileName);
+            
+          resolve(publicData.publicUrl);
+        }, 'image/jpeg', 0.7);
       };
+      img.onerror = () => reject(new Error('Image load failed'));
       img.src = ev.target.result;
     };
+    reader.onerror = () => reject(new Error('FileReader failed'));
     reader.readAsDataURL(file);
   });
 }
@@ -147,11 +193,29 @@ function resetLogoutTimer() {
   logoutTimer = setTimeout(exitAdminMode, TIMEOUT_MS);
 }
 
+// ==================== ADMIN PANEL CACHE ====================
+let adminCache = {};
+
+async function loadAllAdminCache() {
+  const { data } = await supabase
+    .from('admin_settings')
+    .select('key, value');
+  adminCache = {};
+  if (data) {
+    data.forEach(row => { adminCache[row.key] = row.value; });
+  }
+}
+
 // ==================== ADMIN PANEL ====================
 async function showAdminPanel() {
   if (document.getElementById('admin-panel')) return;
 
-  const cmsStatus = (await dbRead('cms_status')) || 'open';
+  // Load all settings once to prevent N+1 queries when switching tabs
+  await loadAllAdminCache();
+
+  // Đọc từ cache thay vì dbRead để tăng tốc
+  const cmsStatus = adminCache['cms_status'] || 'open';
+  
   const panel = document.createElement('div');
   panel.id = 'admin-panel';
   panel.className = 'admin-modal-overlay';
@@ -285,13 +349,13 @@ async function renderImageGrid(tab) {
 
   grid.innerHTML = '<p class="admin-hint" style="text-align:center;grid-column:1/-1">Đang tải...</p>';
 
-  const { data: allSettings } = await supabase
-    .from('admin_settings')
-    .select('key, value')
-    .or('key.like.img_%,key.like.pos_%');
-
+  // Đọc overrides từ RAM thay vì từ DB (siêu nhanh)
   const overrides = {};
-  if (allSettings) allSettings.forEach(s => { overrides[s.key] = s.value; });
+  for (const key in adminCache) {
+    if (key.startsWith('img_') || key.startsWith('pos_')) {
+      overrides[key] = adminCache[key];
+    }
+  }
 
   const isGalleryTab = !!GALLERY_CATEGORIES[tab];
   let images;
@@ -597,13 +661,13 @@ async function renderAnimeSubImages(subId, container) {
   };
   if (!DEFAULT_IMAGES[catKey]) DEFAULT_IMAGES[catKey] = [];
 
-  const { data: allSettings } = await supabase
-    .from('admin_settings')
-    .select('key, value')
-    .or('key.like.img_%,key.like.pos_%');
-
+  // Đọc overrides từ RAM thay vì từ DB
   const overrides = {};
-  if (allSettings) allSettings.forEach(s => { overrides[s.key] = s.value; });
+  for (const key in adminCache) {
+    if (key.startsWith('img_') || key.startsWith('pos_')) {
+      overrides[key] = adminCache[key];
+    }
+  }
 
   const imageList = await getGalleryImageList(catKey);
   const cat = GALLERY_CATEGORIES[catKey];
@@ -711,7 +775,9 @@ function addGalleryImageToContainer(category, subId, container) {
 
     try {
       const customName = `custom_${Date.now()}`;
-      const dataUrl = await resizeImageToBase64(file);
+      // Lưu với phần đuôi .jpg để Storage nhận dạng
+      const storedFileName = `${customName}.jpg`;
+      const dataUrl = await processAndUploadImageToStorage(file, storedFileName);
       await dbWrite(`img_${customName}`, dataUrl);
 
       const imageList = await getGalleryImageList(category);
@@ -747,7 +813,8 @@ function addGalleryImage(category) {
 
     try {
       const customName = `custom_${Date.now()}`;
-      const dataUrl = await resizeImageToBase64(file);
+      const storedFileName = `${customName}.jpg`;
+      const dataUrl = await processAndUploadImageToStorage(file, storedFileName);
       await dbWrite(`img_${customName}`, dataUrl);
 
       const imageList = await getGalleryImageList(category);
@@ -767,7 +834,17 @@ function addGalleryImage(category) {
 
 async function deleteGalleryImage(category, name) {
   try {
-    // Remove base64 data
+    // Check if current image is stored on Supabase Storage Bucket to delete the physical file
+    const currentImgUrl = await dbRead(`img_${name}`);
+    if (currentImgUrl && currentImgUrl.includes('supabase.co/storage')) {
+      const urlParts = currentImgUrl.split('/gallery/');
+      if (urlParts.length > 1) { // Extract filename from URL
+        const fileName = urlParts[1].split('?')[0]; // Remove query params if any
+        await supabase.storage.from('gallery').remove([fileName]);
+      }
+    }
+
+    // Remove DB reference
     await dbWrite(`img_${name}`, '');
     // Remove from list
     const imageList = await getGalleryImageList(category);
@@ -797,7 +874,17 @@ function replaceImage(originalPath, card) {
     card.querySelector('.admin-img-name').textContent = 'Đang xử lý...';
 
     try {
-      const dataUrl = await resizeImageToBase64(file);
+      // Check if current image is in Storage Bucket to overwrite it physically to save space
+      const currentImgUrl = await dbRead(`img_${originalPath}`);
+      let storedFileName = `replace_${Date.now()}.jpg`;
+      if (currentImgUrl && currentImgUrl.includes('supabase.co/storage')) {
+        const urlParts = currentImgUrl.split('/gallery/');
+        if (urlParts.length > 1) {
+          storedFileName = urlParts[1].split('?')[0];
+        }
+      }
+
+      const dataUrl = await processAndUploadImageToStorage(file, storedFileName);
       await dbWrite(`img_${originalPath}`, dataUrl);
       card.querySelector('img').src = dataUrl;
       card.querySelector('.admin-img-name').textContent = originalPath.split('/').pop();
