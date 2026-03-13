@@ -61,6 +61,85 @@ function buildGrid(images, folder, category, isFirst, overrides, extraAttrs = ''
   `;
 }
 
+// Quản lý Anime Subcategories Carousel
+window.animeGallery = {
+  currentIdx: 0,
+  totalCats: 0,
+  init(total) {
+    this.totalCats = total;
+    this.currentIdx = 0;
+  },
+  prev() {
+    if (this.totalCats <= 1) return;
+    this.currentIdx = (this.currentIdx - 1 + this.totalCats) % this.totalCats;
+    this.update();
+  },
+  next() {
+    if (this.totalCats <= 1) return;
+    this.currentIdx = (this.currentIdx + 1) % this.totalCats;
+    this.update();
+  },
+  select(idx) {
+    this.currentIdx = idx;
+    this.update();
+    this.toggleDropdown(false);
+  },
+  toggleDropdown(force) {
+    const dropdown = document.querySelector('.anime-carousel-dropdown');
+    const display = document.querySelector('.anime-carousel-display');
+    if (!dropdown) return;
+    if (typeof force === 'boolean') {
+      dropdown.classList.toggle('show', force);
+      if (display) display.classList.toggle('open', force);
+    } else {
+      dropdown.classList.toggle('show');
+      if (display) display.classList.toggle('open');
+    }
+  },
+  update() {
+    // Hide all grids
+    document.querySelectorAll('.anime-sub-grid').forEach(g => {
+      g.style.display = 'none';
+      g.classList.remove('active-grid');
+    });
+    
+    // Deactivate all dropdown items
+    document.querySelectorAll('.anime-dropdown-item').forEach(i => i.classList.remove('active'));
+    
+    // Show current grids (all instances)
+    const targetGrids = document.querySelectorAll(`.anime-sub-grid[data-index="${this.currentIdx}"]`);
+    targetGrids.forEach(targetGrid => {
+      targetGrid.style.display = '';
+      targetGrid.classList.add('active-grid');
+      targetGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
+        item.classList.remove('visible');
+        setTimeout(() => item.classList.add('visible'), i * 80);
+      });
+    });
+    
+    // Update label text for ALL instances of the carousel on screen
+    const activeItems = document.querySelectorAll(`.anime-dropdown-item[data-index="${this.currentIdx}"]`);
+    const labels = document.querySelectorAll('#current-anime-subcat-name, .anime-carousel-display span:first-child');
+    
+    if (activeItems.length > 0) {
+      const text = activeItems[0].textContent.trim();
+      
+      activeItems.forEach(item => item.classList.add('active'));
+      
+      labels.forEach(label => {
+        label.textContent = text;
+      });
+    }
+  }
+};
+
+document.addEventListener('click', (e) => {
+  const trigger = e.target.closest('.anime-carousel-display');
+  if (!trigger && window.animeGallery) {
+    window.animeGallery.toggleDropdown(false);
+  }
+});
+
 function buildAnimeSection(subcategories, subImages, overrides, isFirst) {
   const hasSubcats = subcategories && subcategories.length > 0;
 
@@ -72,20 +151,32 @@ function buildAnimeSection(subcategories, subImages, overrides, isFirst) {
     `;
   }
 
+  // Khởi tạo state cho JS
+  window.animeGallery.totalCats = subcategories.length;
+  window.animeGallery.currentIdx = 0;
+
   const subTabs = `
-    <div class="anime-sub-tabs-wrapper">
-      <div class="anime-sub-tabs-label">
-        <span class="anime-sub-tabs-icon">✦</span>
-        <span>Thể loại</span>
+    <div class="anime-carousel-wrapper">
+      <button class="anime-carousel-btn prev-btn" onclick="animeGallery.prev()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      
+      <div class="anime-carousel-display" onclick="animeGallery.toggleDropdown()">
+        <span id="current-anime-subcat-name">${subcategories[0].name}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
+        
+        <div class="anime-carousel-dropdown">
+          ${subcategories.map((sub, i) => `
+            <div class="anime-dropdown-item ${i === 0 ? 'active' : ''}" data-index="${i}" onclick="animeGallery.select(${i}); event.stopPropagation();">
+              ${sub.name}
+            </div>
+          `).join('')}
+        </div>
       </div>
-      <div class="anime-sub-tabs">
-        ${subcategories.map((sub, i) => `
-          <button class="anime-sub-tab ${i === 0 ? 'active' : ''}" data-sub-id="${sub.id}">
-            <span class="anime-sub-tab-dot"></span>
-            ${sub.name}
-          </button>
-        `).join('')}
-      </div>
+      
+      <button class="anime-carousel-btn next-btn" onclick="animeGallery.next()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>
+      </button>
     </div>
   `;
 
@@ -93,13 +184,13 @@ function buildAnimeSection(subcategories, subImages, overrides, isFirst) {
     const imgs = subImages[sub.id] || [];
     if (imgs.length === 0) {
       return `
-        <div class="gallery-grid anime-sub-grid" data-sub-id="${sub.id}" style="${i !== 0 ? 'display:none' : ''}">
+        <div class="gallery-grid anime-sub-grid" data-index="${i}" data-sub-id="${sub.id}" style="${i !== 0 ? 'display:none' : ''}">
           <p class="gallery-empty">Chưa có ảnh nào trong mục này.</p>
         </div>
       `;
     }
     return `
-      <div class="gallery-grid anime-sub-grid" data-sub-id="${sub.id}" style="${i !== 0 ? 'display:none' : ''}">
+      <div class="gallery-grid anime-sub-grid" data-index="${i}" data-sub-id="${sub.id}" style="${i !== 0 ? 'display:none' : ''}">
         ${imgs.map((name, j) => {
           const isCustom = name.startsWith('custom_');
           const originalSrc = isCustom ? name : `/img/Sample/AnimeStyle/${name}`;

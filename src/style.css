@@ -551,6 +551,226 @@ body {
   transform: translateY(20px);
 }
 
+/* ==================== ANIME CAROUSEL (FRONTEND) ==================== */
+.anime-carousel-wrapper {
+  margin: 1.5rem auto 3rem;
+  max-width: 650px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2rem;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 50;
+}
+
+.anime-carousel-btn {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 183, 197, 0.6);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--pink-500);
+  cursor: pointer;
+  transition: var(--transition-spring);
+  box-shadow: 0 4px 15px rgba(232, 120, 138, 0.15);
+  flex-shrink: 0;
+}
+
+.anime-carousel-btn:hover {
+  background: linear-gradient(135deg, white, var(--pink-100));
+  transform: translateY(-3px) scale(1.05);
+  border-color: var(--pink-400);
+  box-shadow: 0 8px 20px rgba(232, 120, 138, 0.25);
+  color: var(--pink-600);
+}
+
+.anime-carousel-btn:active {
+  transform: translateY(0) scale(0.95);
+}
+
+.anime-carousel-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.anime-carousel-display {
+  flex: 1;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 240, 245, 0.7));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 183, 197, 0.5);
+  border-top-color: white;
+  border-left-color: white;
+  border-radius: var(--radius-full);
+  padding: 0.8rem 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-spring);
+  box-shadow: 0 8px 24px rgba(212, 160, 167, 0.12);
+  color: var(--pink-600);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.35rem;
+  letter-spacing: 0.5px;
+  text-align: center;
+  user-select: none;
+}
+
+.anime-carousel-display:hover {
+  border-color: var(--pink-400);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 228, 239, 0.85));
+  box-shadow: 0 10px 28px rgba(232, 120, 138, 0.2);
+  transform: translateY(-2px);
+}
+
+.anime-carousel-display.open {
+  border-color: var(--pink-400);
+  box-shadow: 0 4px 12px rgba(232, 120, 138, 0.15), inset 0 2px 5px rgba(232, 120, 138, 0.05);
+  transform: translateY(1px);
+}
+
+.anime-carousel-display svg {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--pink-400);
+  width: 20px;
+  height: 20px;
+}
+
+.anime-carousel-display.open svg {
+  transform: rotate(180deg);
+  color: var(--pink-600);
+}
+
+#current-anime-subcat-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.anime-carousel-dropdown {
+  position: absolute;
+  top: calc(100% + 15px);
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 15px 40px rgba(139, 94, 107, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.5);
+  padding: 0.8rem;
+  max-height: 320px;
+  overflow-y: auto;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-15px) scale(0.96);
+  transform-origin: top center;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 100;
+  
+  /* Scrollbar custom */
+  scrollbar-width: thin;
+  scrollbar-color: var(--pink-300) transparent;
+}
+
+.anime-carousel-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.anime-carousel-dropdown::-webkit-scrollbar-thumb {
+  background: var(--pink-300);
+  border-radius: 10px;
+}
+
+.anime-carousel-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.anime-dropdown-item {
+  padding: 0.8rem 1.2rem;
+  margin-bottom: 0.3rem;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 1.05rem;
+  transition: var(--transition-fast);
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.anime-dropdown-item:last-child {
+  margin-bottom: 0;
+}
+
+.anime-dropdown-item:hover {
+  background: rgba(255, 183, 197, 0.15);
+  color: var(--pink-600);
+  transform: translateX(4px);
+}
+
+.anime-dropdown-item.active {
+  background: linear-gradient(135deg, rgba(255, 240, 245, 0.8), rgba(255, 183, 197, 0.25));
+  color: var(--pink-600);
+  font-weight: 700;
+}
+
+.anime-dropdown-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 60%;
+  background: linear-gradient(to bottom, var(--pink-400), var(--pink-500));
+  border-radius: 0 4px 4px 0;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .anime-carousel-wrapper {
+    margin: 1rem auto 2rem;
+    gap: 0.6rem;
+    padding: 0 0.5rem;
+  }
+  .anime-carousel-display {
+    padding: 0.8rem 1rem;
+    font-size: 1.05rem; /* Slightly smaller to fit long names on iPhones */
+  }
+  .anime-carousel-btn {
+    width: 48px; /* Bigger for thumbs */
+    height: 48px;
+  }
+  .anime-carousel-dropdown {
+    max-height: 50vh; /* Better use of mobile screen height */
+  }
+  .anime-dropdown-item {
+    font-size: 1rem;
+    padding: 0.9rem 1.2rem; /* Taller fat-finger area */
+    margin-bottom: 0.4rem;
+  }
+  .anime-dropdown-item:active {
+    background: rgba(255, 183, 197, 0.3);
+    transform: scale(0.98);
+  }
+}
+
 /* ==================== HOME PAGE ==================== */
 .home-page {
   min-height: calc(100vh - 70px);
