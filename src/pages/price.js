@@ -119,126 +119,133 @@ export function renderPrice() {
         </div>
       </div>
 
-      <!-- ALTERNATIVE STYLE PRICE -->
-      <h2 class="page-title reveal" style="margin-top: 3rem; margin-bottom: 1.5rem;">
-        <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Anime-Manga Style
-      </h2>
-      <div class="price-section">
-        <!-- Alt Normal -->
-        <div class="price-card">
-          <h2 class="price-card-title"><i data-lucide="palette"></i> Normal</h2>
-          <table class="price-table">
-            <thead>
-              <tr>
-                <th>Loại</th>
-                <th>Sketch</th>
-                <th>Line</th>
-                <th>Full</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Head</td>
-                <td>70.000₫</td>
-                <td>100.000₫</td>
-                <td>150.000₫</td>
-              </tr>
-              <tr>
-                <td>Chest-up</td>
-                <td>110.000₫</td>
-                <td>140.000₫</td>
-                <td>210.000₫</td>
-              </tr>
-              <tr>
-                <td>Half-body</td>
-                <td>150.000₫</td>
-                <td>200.000₫</td>
-                <td>270.000₫</td>
-              </tr>
-              <tr>
-                <td>Knee-up</td>
-                <td>180.000₫</td>
-                <td>260.000₫</td>
-                <td>350.000₫</td>
-              </tr>
-              <tr>
-                <td>Full-body</td>
-                <td>230.000₫</td>
-                <td>300.000₫</td>
-                <td>470.000₫</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- ALTERNATIVE STYLE PRICE (Collapsible) -->
+      <div class="price-collapsible">
+        <div class="price-collapsible-header">
+          <h2 class="page-title" style="margin: 0;">
+            <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> Anime-Manga Style
+          </h2>
+          <span class="price-collapsible-toggle"><i data-lucide="chevron-down"></i></span>
         </div>
+        <div class="price-collapsible-body">
+          <div class="price-section" style="margin-top: 1.5rem;">
+            <!-- Alt Normal -->
+            <div class="price-card">
+              <h2 class="price-card-title"><i data-lucide="palette"></i> Normal</h2>
+              <table class="price-table">
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Sketch</th>
+                    <th>Line</th>
+                    <th>Full</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Head</td>
+                    <td>70.000₫</td>
+                    <td>100.000₫</td>
+                    <td>150.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Chest-up</td>
+                    <td>110.000₫</td>
+                    <td>140.000₫</td>
+                    <td>210.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Half-body</td>
+                    <td>150.000₫</td>
+                    <td>200.000₫</td>
+                    <td>270.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Knee-up</td>
+                    <td>180.000₫</td>
+                    <td>260.000₫</td>
+                    <td>350.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Full-body</td>
+                    <td>230.000₫</td>
+                    <td>300.000₫</td>
+                    <td>470.000₫</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-        <!-- Alt Manga -->
-        <div class="price-card">
-          <h2 class="price-card-title"><i data-lucide="book-open"></i> Manga</h2>
-          <table class="price-table">
-            <thead>
-              <tr>
-                <th>Loại</th>
-                <th>Line</th>
-                <th>Inking</th>
-                <th>Color</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Head</td>
-                <td>90.000₫</td>
-                <td>130.000₫</td>
-                <td>150.000₫</td>
-              </tr>
-              <tr>
-                <td>Chest-up</td>
-                <td>120.000₫</td>
-                <td>150.000₫</td>
-                <td>200.000₫</td>
-              </tr>
-              <tr>
-                <td>Half-body</td>
-                <td>160.000₫</td>
-                <td>200.000₫</td>
-                <td>250.000₫</td>
-              </tr>
-              <tr>
-                <td>Knee-up</td>
-                <td>190.000₫</td>
-                <td>250.000₫</td>
-                <td>300.000₫</td>
-              </tr>
-              <tr>
-                <td>Full-body</td>
-                <td>240.000₫</td>
-                <td>310.000₫</td>
-                <td>400.000₫</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <!-- Alt Manga -->
+            <div class="price-card">
+              <h2 class="price-card-title"><i data-lucide="book-open"></i> Manga</h2>
+              <table class="price-table">
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Line</th>
+                    <th>Inking</th>
+                    <th>Color</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Head</td>
+                    <td>90.000₫</td>
+                    <td>130.000₫</td>
+                    <td>150.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Chest-up</td>
+                    <td>120.000₫</td>
+                    <td>150.000₫</td>
+                    <td>200.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Half-body</td>
+                    <td>160.000₫</td>
+                    <td>200.000₫</td>
+                    <td>250.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Knee-up</td>
+                    <td>190.000₫</td>
+                    <td>250.000₫</td>
+                    <td>300.000₫</td>
+                  </tr>
+                  <tr>
+                    <td>Full-body</td>
+                    <td>240.000₫</td>
+                    <td>310.000₫</td>
+                    <td>400.000₫</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-        <!-- Alt Chibi -->
-        <div class="price-card">
-          <h2 class="price-card-title"><i data-lucide="star"></i> Chibi</h2>
-          <table class="price-table">
-            <thead>
-              <tr>
-                <th>Loại</th>
-                <th>Sketch</th>
-                <th>Line</th>
-                <th>Color</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Full-body</td>
-                <td>100.000₫</td>
-                <td>150.000₫</td>
-                <td>200.000₫</td>
-              </tr>
-            </tbody>
-          </table>
+            <!-- Alt Chibi -->
+            <div class="price-card">
+              <h2 class="price-card-title"><i data-lucide="star"></i> Chibi</h2>
+              <table class="price-table">
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Sketch</th>
+                    <th>Line</th>
+                    <th>Color</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Full-body</td>
+                    <td>100.000₫</td>
+                    <td>150.000₫</td>
+                    <td>200.000₫</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -314,7 +321,7 @@ export function renderPrice() {
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="wallet"></i></span>
-                <span>Được phép trì hoãn tiền comm trong <strong>2 tuần</strong>. Nếu quá 2 tuần, artist có quyền lên bài cân nhắc giao dịch.</span>
+                <span>Được phép trì hoãn tiền comm trong <strong>1 tuần</strong>. Nếu quá 1 tuần, artist có quyền lên bài cân nhắc giao dịch.</span>
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="image"></i></span>

@@ -1451,6 +1451,76 @@ body {
   font-style: italic;
 }
 
+/* Price Collapsible Accordion */
+.price-collapsible {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.price-collapsible:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+.price-collapsible-header {
+  padding: 1.2rem 1.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(255, 183, 197, 0.15), rgba(255, 228, 239, 0.15));
+  transition: var(--transition-fast);
+  user-select: none;
+}
+
+.price-collapsible-header:hover {
+  background: linear-gradient(135deg, rgba(255, 183, 197, 0.25), rgba(255, 228, 239, 0.25));
+}
+
+.price-collapsible-toggle {
+  color: var(--pink-400);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.price-collapsible-toggle .lucide {
+  width: 24px;
+  height: 24px;
+}
+
+.price-collapsible.open .price-collapsible-toggle {
+  transform: rotate(180deg);
+  color: var(--pink-600);
+}
+
+.price-collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.price-collapsible-body .price-section {
+  padding: 0 1.5rem 1.5rem;
+}
+
+.price-collapsible-body .price-card {
+  opacity: 1;
+  transform: none;
+}
+
+.price-collapsible-body .price-card:hover {
+  transform: translateY(-4px);
+}
+
 /* TOS Section */
 .tos-section {
   margin-top: 3rem;
