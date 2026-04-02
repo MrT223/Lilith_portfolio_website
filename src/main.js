@@ -193,20 +193,15 @@ function initPageEffects() {
       const container = header.parentElement;
       const body = container.querySelector('.price-collapsible-body');
       if (container.classList.contains('open')) {
-        // Closing: set explicit height first, then collapse to 0
+        // Closing
         body.style.maxHeight = body.scrollHeight + 'px';
-        requestAnimationFrame(() => {
-          body.style.maxHeight = '0px';
-        });
+        body.offsetHeight; // force reflow
+        body.style.maxHeight = '0px';
         container.classList.remove('open');
       } else {
-        // Opening: expand to scrollHeight, then remove inline style
+        // Opening
         container.classList.add('open');
         body.style.maxHeight = body.scrollHeight + 'px';
-        body.addEventListener('transitionend', function handler() {
-          body.style.maxHeight = 'none';
-          body.removeEventListener('transitionend', handler);
-        });
       }
     });
   });
