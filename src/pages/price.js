@@ -261,6 +261,10 @@ export function renderPrice() {
                 <span>CỌC <strong>30%</strong> sau khi chốt slot - wl, <strong>THANH TOÁN full</strong> tiền comm sau khi nhận được sketch.</span>
               </div>
               <div class="tos-item">
+                <span class="tos-item-icon"><i data-lucide="timer-off"></i></span>
+                <span>Quá <strong>2 ngày</strong> không cọc = <strong>tự động huỷ slot</strong>.</span>
+              </div>
+              <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="users"></i></span>
                 <span>Thêm character: <strong>+100%</strong> giá gốc.</span>
               </div>
@@ -270,7 +274,7 @@ export function renderPrice() {
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="clock"></i></span>
-                <span>Deadline từ <strong>1 tuần đến 3 tuần</strong>, có thể lâu hơn nếu xảy ra vấn đề phát sinh.</span>
+                <span>Deadline từ <strong>1 tháng đến 3 tháng</strong>, có thể lâu hơn nếu xảy ra vấn đề phát sinh.</span>
               </div>
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="zap"></i></span>
