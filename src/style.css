@@ -2052,6 +2052,10 @@ body {
   margin-bottom: 0.5rem;
   color: var(--pink-400);
   animation: floatBlossom 3s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .footer-blossom .lucide {
