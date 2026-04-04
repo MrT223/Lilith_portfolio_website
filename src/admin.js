@@ -7,6 +7,7 @@ const TIMEOUT_MS = 15 * 60 * 1000;
 let adminMode = false;
 let logoutTimer = null;
 let adminPasswordHash = null;
+let visitorOverridesCache = null;
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -1008,17 +1009,7 @@ export function applyCmsStatus(status) {
   badge.innerHTML = `<span class="cms-dot"></span> CMS: ${labels[status] || status.toUpperCase()}`;
 }
 
-export async function applyImageOverrides() {
-  const { data: settings } = await supabase
-    .from('admin_settings')
-    .select('key, value')
-    .or('key.like.img_%,key.like.pos_%');
-
-  if (!settings) return;
-
-  const overrides = {};
-  settings.forEach(s => { overrides[s.key] = s.value; });
-
+function applyOverridesToDOM(overrides) {
   document.querySelectorAll('img[src], img[data-lightbox]').forEach(img => {
     const src = img.getAttribute('data-lightbox') || img.getAttribute('src');
     if (!src) return;
@@ -1036,8 +1027,60 @@ export async function applyImageOverrides() {
   });
 }
 
+export function applyImageOverrides() {
+  // Synchronous — uses RAM cache, no Supabase fetch
+  // In admin mode: use adminCache (always fresh from writes)
+  if (adminMode && Object.keys(adminCache).length > 0) {
+    const overrides = {};
+    for (const key in adminCache) {
+      if (key.startsWith('img_') || key.startsWith('pos_')) {
+        overrides[key] = adminCache[key];
+      }
+    }
+    applyOverridesToDOM(overrides);
+    return;
+  }
+  // Visitor mode: use cached data from loadAdminSettings()
+  if (visitorOverridesCache) {
+    applyOverridesToDOM(visitorOverridesCache);
+  }
+}
+
 export async function loadAdminSettings() {
-  const cmsStatus = await dbRead('cms_status');
+  let rawData;
+
+  // Production: use Vercel Edge cached API route
+  if (import.meta.env.PROD) {
+    try {
+      const res = await fetch('/api/admin-settings');
+      if (res.ok) rawData = await res.json();
+    } catch (e) {
+      console.warn('[settings] API route failed, falling back to Supabase:', e);
+    }
+  }
+
+  // Dev mode or API fallback: direct Supabase query
+  if (!rawData) {
+    const { data } = await supabase
+      .from('admin_settings')
+      .select('key, value')
+      .or('key.eq.cms_status,key.like.img_%,key.like.pos_%');
+    rawData = data;
+  }
+
+  if (!rawData) return;
+
+  let cmsStatus = null;
+  const overrides = {};
+  rawData.forEach(s => {
+    if (s.key === 'cms_status') {
+      cmsStatus = s.value;
+    } else {
+      overrides[s.key] = s.value;
+    }
+  });
+
+  visitorOverridesCache = overrides;
   if (cmsStatus) applyCmsStatus(cmsStatus);
-  await applyImageOverrides();
+  applyOverridesToDOM(overrides);
 }

@@ -348,138 +348,160 @@ async function idbSet(key, val) {
   } catch (e) {}
 }
 
+// === HELPER: Parse raw DB data and update DOM ===
+function renderGalleryFromData(allData) {
+  let normal = [], chibi = [], chibiych = [], anime = [];
+  let overrides = {};
+  let animeSubcategories = [];
+  let animeSubImages = {};
+
+  allData.forEach((row) => {
+    const { key, value } = row;
+    try {
+      if (key === SUPABASE_KEYS.normal) normal = JSON.parse(value) || [];
+      else if (key === SUPABASE_KEYS.chibi) chibi = JSON.parse(value) || [];
+      else if (key === SUPABASE_KEYS.chibiych) chibiych = JSON.parse(value) || [];
+      else if (key === SUPABASE_KEYS.anime) anime = JSON.parse(value) || [];
+      else if (key === 'anime_subcategories') animeSubcategories = JSON.parse(value) || [];
+      else if (key.startsWith('gallery_images_anime_sub_')) {
+        const subId = key.replace('gallery_images_anime_', '');
+        animeSubImages[subId] = JSON.parse(value) || [];
+      }
+      else if (key.startsWith('img_') || key.startsWith('pos_')) {
+        overrides[key] = value;
+      }
+    } catch (e) { /* skip parse errors */ }
+  });
+
+  cachedImages = { normal, chibi, chibiych, anime };
+  cachedOverrides = overrides;
+  cachedAnimeSubcategories = animeSubcategories;
+  cachedAnimeSubImages = animeSubImages;
+
+  // Replace skeleton/old grids with real data
+  const categories = [
+    { category: 'normal', images: normal, folder: 'Normal' },
+    { category: 'chibi', images: chibi, folder: 'ChibiNew' },
+    { category: 'chibiych', images: chibiych, folder: 'Chibi' },
+  ];
+
+  for (const { category, images, folder } of categories) {
+    const gridEl = document.querySelector(`.gallery-grid-section[data-category="${category}"]`);
+    if (!gridEl) continue;
+    const isVisible = gridEl.style.display !== 'none';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = buildGrid(images, folder, category, true, overrides);
+    const newGrid = tempDiv.firstElementChild;
+    if (newGrid) {
+      newGrid.style.display = isVisible ? '' : 'none';
+      gridEl.replaceWith(newGrid);
+      if (isVisible) {
+        newGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
+          setTimeout(() => item.classList.add('visible'), i * 80);
+        });
+      }
+    }
+  }
+
+  // Update anime section
+  const animeEl = document.querySelector(`.gallery-grid-section[data-category="anime"]`);
+  if (animeEl) {
+    const isVisible = animeEl.style.display !== 'none';
+    const tempDiv = document.createElement('div');
+    if (animeSubcategories.length > 0) {
+      tempDiv.innerHTML = buildAnimeSection(animeSubcategories, animeSubImages, overrides, true);
+    } else {
+      tempDiv.innerHTML = buildGrid(anime, 'AnimeStyle', 'anime', true, overrides);
+    }
+    const newEl = tempDiv.firstElementChild;
+    if (newEl) {
+      newEl.style.display = isVisible ? '' : 'none';
+      animeEl.replaceWith(newEl);
+      if (animeSubcategories.length > 0) {
+        initAnimeSubTabs(newEl);
+      }
+      if (isVisible) {
+        const activeGrid = newEl.querySelector('.anime-sub-grid:not([style*="display:none"]):not([style*="display: none"])') || newEl;
+        activeGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
+          setTimeout(() => item.classList.add('visible'), i * 80);
+        });
+      }
+    }
+  }
+}
+
+// === HELPER: Fetch full gallery payload from Supabase ===
+async function fetchGalleryPayload() {
+  // Production: use Vercel Edge cached API route
+  if (import.meta.env.PROD) {
+    const res = await fetch('/api/gallery-data');
+    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    return await res.json(); // { version, data }
+  }
+
+  // Dev: direct Supabase queries (parallel)
+  const keysToFetch = [
+    SUPABASE_KEYS.normal,
+    SUPABASE_KEYS.chibi,
+    SUPABASE_KEYS.chibiych,
+    SUPABASE_KEYS.anime,
+    'anime_subcategories'
+  ].join(',');
+
+  const [vRes, dRes] = await Promise.all([
+    supabase.from('admin_settings').select('value').eq('key', 'gallery_version').maybeSingle(),
+    supabase.from('admin_settings').select('key, value')
+      .or(`key.in.(${keysToFetch}),key.like.img_%,key.like.pos_%,key.like.gallery_images_anime_%`)
+  ]);
+
+  if (dRes.error) throw dRes.error;
+  return { version: vRes.data?.value || '0', data: dRes.data };
+}
+
+// === MAIN: Stale-While-Revalidate loading strategy ===
 async function loadSupabaseData() {
   try {
-    // 1. Lấy version hiện tại từ Supabase (rất nhẹ, <50ms)
-    const { data: versionData } = await supabase
-      .from('admin_settings')
-      .select('value')
-      .eq('key', 'gallery_version')
-      .maybeSingle();
-    
-    const serverVersion = versionData?.value || '0';
-    const localVersion = await idbGet('gallery_version');
-    
-    let allData = null;
+    // Step 1: Try IndexedDB cache first → instant render for returning visitors
+    const cachedData = await idbGet('gallery_data');
 
-    // 2. Kiểm tra Cache
-    if (serverVersion === localVersion) {
-      // Version khớp -> Load siêu tốc từ IndexedDB Local (~10ms)
-      console.log('[gallery] Version match. Loading from Local IndexedDB Cache...');
-      allData = await idbGet('gallery_data');
+    if (cachedData) {
+      console.log('[gallery] ⚡ Instant render from IndexedDB cache');
+      renderGalleryFromData(cachedData);
+
+      // Step 2: Background revalidation — check version, update cache silently
+      (async () => {
+        try {
+          const result = await fetchGalleryPayload();
+          const serverVersion = result.version;
+          const localVersion = await idbGet('gallery_version');
+
+          if (serverVersion !== localVersion) {
+            console.log('[gallery] Cache stale — updating in background...');
+            await idbSet('gallery_data', result.data);
+            await idbSet('gallery_version', serverVersion);
+            console.log('[gallery] ✓ Background cache updated for next visit');
+          } else {
+            console.log('[gallery] ✓ Cache is fresh');
+          }
+        } catch (e) {
+          console.warn('[gallery] Background revalidation failed:', e);
+        }
+      })();
+      return;
     }
 
-    // 3. Nếu chưa có cache hoặc version khác, fetch toàn bộ từ DB
-    if (!allData) {
-      console.log('[gallery] Fetching full 20MB+ payload from Supabase...');
-      const keysToFetch = [
-        SUPABASE_KEYS.normal,
-        SUPABASE_KEYS.chibi,
-        SUPABASE_KEYS.chibiych,
-        SUPABASE_KEYS.anime,
-        'anime_subcategories'
-      ].join(',');
+    // Step 3: No cache (first visit) — must fetch
+    console.log('[gallery] First visit — fetching from Supabase...');
 
-      const { data: dbData, error } = await supabase
-        .from('admin_settings')
-        .select('key, value')
-        .or(`key.in.(${keysToFetch}),key.like.img_%,key.like.pos_%,key.like.gallery_images_anime_%`);
+    const result = await fetchGalleryPayload();
 
-      if (error) throw error;
-      allData = dbData;
-
-      // Lưu Cache
-      await idbSet('gallery_data', allData);
-      await idbSet('gallery_version', serverVersion);
-    }
-
-    let normal = [], chibi = [], chibiych = [], anime = [];
-    let overrides = {};
-    let animeSubcategories = [];
-    let animeSubImages = {};
-
-    // Phân loại dữ liệu 1 lần duyệt (O(N))
-    allData.forEach((row) => {
-      const { key, value } = row;
-      try {
-        if (key === SUPABASE_KEYS.normal) normal = JSON.parse(value) || [];
-        else if (key === SUPABASE_KEYS.chibi) chibi = JSON.parse(value) || [];
-        else if (key === SUPABASE_KEYS.chibiych) chibiych = JSON.parse(value) || [];
-        else if (key === SUPABASE_KEYS.anime) anime = JSON.parse(value) || [];
-        else if (key === 'anime_subcategories') animeSubcategories = JSON.parse(value) || [];
-        else if (key.startsWith('gallery_images_anime_sub_')) {
-          const subId = key.replace('gallery_images_anime_', '');
-          animeSubImages[subId] = JSON.parse(value) || [];
-        }
-        else if (key.startsWith('img_') || key.startsWith('pos_')) {
-          overrides[key] = value;
-        }
-      } catch (e) {
-        // Bỏ qua lỗi parse JSON cục bộ
-      }
-    });
-
-    cachedImages = { normal, chibi, chibiych, anime };
-    cachedOverrides = overrides;
-    cachedAnimeSubcategories = animeSubcategories;
-    cachedAnimeSubImages = animeSubImages;
-
-    // Thay thế tất cả grids bằng dữ liệu thật
-    const categories = [
-      { category: 'normal', images: normal, folder: 'Normal' },
-      { category: 'chibi', images: chibi, folder: 'ChibiNew' },
-      { category: 'chibiych', images: chibiych, folder: 'Chibi' },
-    ];
-
-    for (const { category, images, folder } of categories) {
-      const gridEl = document.querySelector(`.gallery-grid-section[data-category="${category}"]`);
-      if (!gridEl) continue;
-
-      const isVisible = gridEl.style.display !== 'none';
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = buildGrid(images, folder, category, true, overrides);
-      const newGrid = tempDiv.firstElementChild;
-      if (newGrid) {
-        newGrid.style.display = isVisible ? '' : 'none';
-        gridEl.replaceWith(newGrid);
-        if (isVisible) {
-          newGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
-            setTimeout(() => item.classList.add('visible'), i * 80);
-          });
-        }
-      }
-    }
-
-    // Update anime section
-    const animeEl = document.querySelector(`.gallery-grid-section[data-category="anime"]`);
-    if (animeEl) {
-      const isVisible = animeEl.style.display !== 'none';
-      const tempDiv = document.createElement('div');
-      if (animeSubcategories.length > 0) {
-        tempDiv.innerHTML = buildAnimeSection(animeSubcategories, animeSubImages, overrides, true);
-      } else {
-        tempDiv.innerHTML = buildGrid(anime, 'AnimeStyle', 'anime', true, overrides);
-      }
-      const newEl = tempDiv.firstElementChild;
-      if (newEl) {
-        newEl.style.display = isVisible ? '' : 'none';
-        animeEl.replaceWith(newEl);
-
-        if (animeSubcategories.length > 0) {
-          initAnimeSubTabs(newEl);
-        }
-
-        if (isVisible) {
-          const activeGrid = newEl.querySelector('.anime-sub-grid:not([style*="display:none"]):not([style*="display: none"])') || newEl;
-          activeGrid.querySelectorAll('.gallery-item').forEach((item, i) => {
-            setTimeout(() => item.classList.add('visible'), i * 80);
-          });
-        }
-      }
+    if (result.data) {
+      await idbSet('gallery_data', result.data);
+      await idbSet('gallery_version', result.version);
+      renderGalleryFromData(result.data);
     }
   } catch (e) {
     console.error('[gallery] loadSupabaseData error:', e);
-    // Hiện thông báo lỗi thay vì skeleton trống trơn
     const gridEl = document.querySelector('.gallery-grid-section[data-category="normal"]');
     if (gridEl) {
       gridEl.innerHTML = '<p class="gallery-empty">Không thể tải ảnh. Vui lòng thử lại sau.</p>';
