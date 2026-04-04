@@ -1,9 +1,13 @@
 import { createIcons, icons } from 'lucide';
+import { injectSpeedInsights } from '@vercel/speed-insights';
 import { renderHome } from './pages/home.js';
 import { renderGallery, initAnimeSubTabs } from './pages/gallery.js';
 import { renderPrice } from './pages/price.js';
 import { renderAbout } from './pages/about.js';
 import { initAdminSecret, loadAdminSettings, applyImageOverrides } from './admin.js';
+
+// Initialize Vercel Speed Insights
+injectSpeedInsights();
 
 const pages = {
   home: renderHome,
