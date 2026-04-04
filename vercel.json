@@ -1,7 +1,10 @@
 {
-  "functions": {
-    "api/*.js": {
-      "runtime": "@vercel/node@3"
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
-  }
+  ]
 }
