@@ -2219,12 +2219,16 @@ body {
   }
 
   .gallery-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
     margin-bottom: 1.5rem;
   }
 
   .gallery-tab {
-    padding: 0.6rem 1.5rem;
+    padding: 0.6rem 1rem;
     font-size: 0.9rem;
+    justify-content: center;
   }
 
   .gallery-grid {
@@ -2423,8 +2427,8 @@ body {
   }
 
   .gallery-tab {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.85rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.82rem;
   }
 
   .anime-sub-tabs-wrapper {
