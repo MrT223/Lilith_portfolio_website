@@ -21,7 +21,7 @@ export function renderHome() {
           <i data-lucide="coins"></i> Bảng Giá
         </a>
         <a href="#about" class="btn btn-outline" data-page="about" onclick="event.preventDefault(); window.location.hash='about';">
-          <i data-lucide="sparkles"></i> About Me
+          <i data-lucide="sparkles"></i> My Personal
         </a>
         <a href="https://www.facebook.com/profile.php?id=61580142310861" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
           <i data-lucide="message-circle"></i> Liên hệ Commission

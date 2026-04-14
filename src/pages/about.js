@@ -15,7 +15,7 @@ export function renderAbout() {
     <section class="about-page">
       <div class="page-header reveal">
         <h1 class="page-title">
-          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> About Me
+          <span class="page-title-accent"><img src="/img/concept/logo.png" alt="" class="title-logo" /></span> My Personal
         </h1>
         <p class="page-desc">Xin chào, tớ là Lilith Ylliz!</p>
       </div>
