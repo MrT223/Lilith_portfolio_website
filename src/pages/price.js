@@ -283,10 +283,7 @@ export function renderPrice() {
                 <span class="tos-item-icon"><i data-lucide="clock"></i></span>
                 <span>Deadline từ <strong>1 tháng đến 3 tháng</strong>, có thể lâu hơn nếu xảy ra vấn đề phát sinh.</span>
               </div>
-              <div class="tos-item">
-                <span class="tos-item-icon"><i data-lucide="zap"></i></span>
-                <span>Có nhận <strong>rush</strong> nhưng giá sẽ tùy thuộc vào deadline mà khách đưa, dao động từ <strong>50.000 - 300.000₫</strong>.</span>
-              </div>
+
               <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="pencil"></i></span>
                 <span>Phí sửa <strong>hoàn toàn miễn phí</strong> trước khi chốt sketch. Sửa sau sketch (line) và final sẽ <strong>tính thêm phí</strong> (hoặc không nếu lỗi nằm ở artist).</span>
