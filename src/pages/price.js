@@ -324,6 +324,10 @@ export function renderPrice() {
                 <span class="tos-item-icon"><i data-lucide="image"></i></span>
                 <span>Được phép sửa trực tiếp lên tranh, <strong>không cần hỏi lại artist</strong>.</span>
               </div>
+              <div class="tos-item">
+                <span class="tos-item-icon"><i data-lucide="x-circle"></i></span>
+                <span>Nếu <strong>hủy slot</strong> sau khi đã cọc, khách hàng sẽ <strong>mất toàn bộ</strong> tiền cọc.</span>
+              </div>
               <div class="tos-warning">
                 <span><i data-lucide="alert-triangle"></i></span>
                 <span><strong>NGHIÊM CẤM FEED CHO A.I</strong></span>
