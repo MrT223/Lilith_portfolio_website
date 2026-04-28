@@ -754,6 +754,10 @@ body {
   border-radius: var(--radius-xl);
   cursor: pointer;
   transition: var(--transition-spring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .gallery-tab.active {
@@ -1729,8 +1733,8 @@ body {
 
   .gallery-tabs {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.6rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
     margin-bottom: 1.5rem;
   }
 
@@ -1935,9 +1939,22 @@ body {
     height: 280px;
   }
 
+  .gallery-tabs {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    margin-bottom: 1.2rem;
+  }
+
   .gallery-tab {
-    padding: 0.5rem 0.8rem;
-    font-size: 0.82rem;
+    padding: 0.5rem 0.2rem;
+    font-size: 0.75rem;
+    gap: 0.3rem;
+  }
+
+  .gallery-tab i, 
+  .gallery-tab .lucide {
+    width: 14px;
+    height: 14px;
   }
 
 
