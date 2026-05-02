@@ -94,7 +94,7 @@ export function renderPrice() {
 
         <!-- Emote / Chibi YCH -->
         <div class="price-card">
-          <h2 class="price-card-title"><i data-lucide="sparkles"></i> Emote & Chibi YCH</h2>
+          <h2 class="price-card-title"><i data-lucide="sparkles"></i> Chibi YCH</h2>
           <table class="price-table">
             <thead>
               <tr>
@@ -104,11 +104,7 @@ export function renderPrice() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Emote</td>
-                <td>50.000₫</td>
-                <td>×2 theo số lượng</td>
-              </tr>
+
               <tr>
                 <td>Chibi YCH</td>
                 <td>80.000₫</td>
