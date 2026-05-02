@@ -111,7 +111,7 @@ export function renderPrice() {
               </tr>
               <tr>
                 <td>Chibi YCH</td>
-                <td>60.000₫</td>
+                <td>80.000₫</td>
                 <td>×2 theo số lượng</td>
               </tr>
             </tbody>
