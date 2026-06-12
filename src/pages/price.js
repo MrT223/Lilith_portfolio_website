@@ -184,6 +184,10 @@ export function renderPrice() {
                 <span>Gửi đầy đủ brief. Có thể tả nhưng vui lòng kèm <strong>hình ảnh chi tiết</strong>.</span>
               </div>
               <div class="tos-item">
+                <span class="tos-item-icon"><i data-lucide="calendar-clock"></i></span>
+                <span>Nếu khách hàng <strong>gửi brief muộn</strong> hoặc sát deadline, artist có quyền <strong>thương lượng lại deadline</strong> (ít nhất <strong>15 ngày</strong>).</span>
+              </div>
+              <div class="tos-item">
                 <span class="tos-item-icon"><i data-lucide="wallet"></i></span>
                 <span>Được phép trì hoãn tiền comm trong <strong>1 tuần</strong>. Nếu quá 1 tuần, artist có quyền lên bài cân nhắc giao dịch.</span>
               </div>
